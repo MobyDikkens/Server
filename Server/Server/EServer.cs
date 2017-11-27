@@ -115,7 +115,7 @@ namespace Server
             }
         }
 
-
+        //To procces a client in a personal thread
         private static void ClientHandler(object o)
         {
             TcpClient client = o as TcpClient;

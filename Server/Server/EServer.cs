@@ -24,7 +24,7 @@ namespace Server
         {
             try
             {
-                endPoint = new IPEndPoint(IPAddress.Parse(InitiallizeServer.GetIp()), Convert.ToInt32(InitiallizeServer.GetPort()));
+                endPoint = new IPEndPoint(IPAddress.Parse(ServerConfig.GetIp()), Convert.ToInt32(ServerConfig.GetPort()));
             }
             catch(Exception ex)
             {
@@ -45,6 +45,19 @@ namespace Server
             }
         }
 
+        //Different ways to bind a server
+        public void Initiallize(IPEndPoint endPoint)
+        {
+            try
+            {
+                listener = new TcpListener(endPoint);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
         //Start our server
         public void Start()
         {
@@ -56,9 +69,12 @@ namespace Server
             {
                 Console.WriteLine(ex.ToString());
             }
+
+            //Run server
+            Run();
         }
 
-        public void Handler()
+        private void Run()
         {
             while(true)
             {
@@ -68,40 +84,6 @@ namespace Server
                     //Our client
                     TcpClient client = listener.AcceptTcpClient();
                     Thread thread = null;
-
-                    /*
-                     * string package = null;
-
-                    try
-                    {
-                        while (true)
-                        {
-                            //stream to work with buffer
-                            NetworkStream networkStream = client.GetStream();
-
-                            //processing a package and adding it to the end of string value
-                            package += Unpackage(networkStream);
-
-                            //Check if it is the end of the package
-                            if (package.IndexOf("\0") > -1)
-                            {
-                                //Find the end of the package
-                                package = package.Substring(0, package.IndexOf("\0"));
-
-                                break;
-                            }
-
-                        }
-
-                        Console.WriteLine(package);
-
-
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                    */
 
                     thread = new Thread(ClientHandler);
 
@@ -121,7 +103,7 @@ namespace Server
             TcpClient client = o as TcpClient;
             string package = "";
 
-
+            //if we cannot implement o as TcpClient
             if (o == null)
             {
                 return;
@@ -139,9 +121,9 @@ namespace Server
                             networkStream = client.GetStream();
                             package += Unpackage(networkStream);
                         }
-                        catch
+                        catch(Exception ex)
                         {
-                            Console.WriteLine("NetworkStream ERROR");
+                            Console.WriteLine(ex.ToString());
                         }
                         finally
                         {
@@ -151,10 +133,10 @@ namespace Server
                                 client.Close();
                                 networkStream.Close();
                             }
-                            catch
+                            catch(Exception ex)
                             {
 
-                                Console.WriteLine("Closing ERROR");
+                                Console.WriteLine(ex.ToString());
 
                             }
 
@@ -187,7 +169,7 @@ namespace Server
         }
 
 
-
+        //Make it ~ integrated into a NetworkStream
         private static string Unpackage(NetworkStream networkStream)
         {
             //amoun of bytes and package buffer

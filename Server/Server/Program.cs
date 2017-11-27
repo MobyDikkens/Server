@@ -9,14 +9,27 @@ using Server.Models;
 
 namespace Server
 {
-    class Program:IServerController
+    class Program:ServerStarting
     {
 
         static void Main(string[] args)
         {
-            Program server = new Program();
+            /*Program server = new Program();
 
-            server.StartServer();
+            server.StartServer();*/
+
+            string[][] catalogTree = CloudConfigs.CloudConfig.GetCatalogTree("C:\\Users\\MobyDi\\Desktop\\Пан Горох фото");
+
+            for(int i=0;i<catalogTree.Length;i++)
+            {
+
+                Console.WriteLine(catalogTree[i][0]);
+
+                for(int j=1;j<catalogTree[i].Length;j++)
+                {
+                    Console.WriteLine("                {0}", catalogTree[i][j]);
+                }
+            }
 
             Console.ReadKey();
         }
@@ -30,8 +43,6 @@ namespace Server
             //Start server
             server.Start();
 
-            //Start listening
-            server.Handler();
         }
 
         //Initiallize Sockets(.ini files) + go to ServerController

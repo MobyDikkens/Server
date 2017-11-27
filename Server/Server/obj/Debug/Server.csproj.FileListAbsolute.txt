@@ -5,3 +5,7 @@ C:\Users\MobyDi\Desktop\Server\Server\Server\obj\Debug\Server.csprojResolveAssem
 C:\Users\MobyDi\Desktop\Server\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
 C:\Users\MobyDi\Desktop\Server\Server\Server\obj\Debug\Server.exe
 C:\Users\MobyDi\Desktop\Server\Server\Server\obj\Debug\Server.pdb
+C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.dll
+C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.xml
+C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.SqlServer.xml

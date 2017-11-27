@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Server.ClientModel
 {
-    class Directory
+    class ClientDirectory
     {
+        private int ID;
+
+        public string WorkingDirectory { get; private set; }
+
+        public ClientDirectory(string workingDirectory)
+        {
+            WorkingDirectory = workingDirectory;
+        }
     }
 }

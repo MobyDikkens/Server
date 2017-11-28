@@ -101,7 +101,9 @@ namespace Server
         private static void ClientHandler(object o)
         {
             TcpClient client = o as TcpClient;
-            string package = "";
+            string package = String.Empty;
+
+            //package = "admin,qwerty12345";
 
             //if we cannot implement o as TcpClient
             if (o == null)
@@ -166,6 +168,17 @@ namespace Server
                     Console.WriteLine();
 
             }
+
+           /* PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(package);
+
+            ClientModel.Client clientmodel= new ClientModel.Client(disassembly.GetLogin(),disassembly.GetPassword());
+
+            using (var db = new ClientContext())
+            {
+                db.Clients.Add(clientmodel);
+                db.SaveChanges();
+            }*/
+
         }
 
 

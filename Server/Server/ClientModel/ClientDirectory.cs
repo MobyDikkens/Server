@@ -9,7 +9,7 @@ namespace Server.ClientModel
 {
     class ClientDirectory
     {
-        private int ID;
+        public int Id { get; set; }
 
         public string WorkingDirectory { get; private set; }
 

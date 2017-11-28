@@ -7,8 +7,9 @@ using System.IO;
 
 namespace Server.CloudConfigs
 {
-    static class CloudConfig
+    static class WorkingDirectoryConfig
     {
+        //Returns cloud working directory
         public static string GetWorkingDirectory()
         {
             try
@@ -28,6 +29,7 @@ namespace Server.CloudConfigs
             return null;
         }
 
+        //Return a tree catalogs of chosen directory
         public static string[][] GetCatalogTree(string path)
         {
             string[][] catalogTree = null;

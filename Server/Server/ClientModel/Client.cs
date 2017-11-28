@@ -8,7 +8,7 @@ namespace Server.ClientModel
 {
     class Client
     {
-        private int ID;
+       public int Id { get; set; }
 
         //To store a client working directory
         public ClientDirectory WorkingDirectory { get; private set; }
@@ -26,6 +26,8 @@ namespace Server.ClientModel
             Login = login;
             Password = password;
             WorkingDirectory = workingDirectory;
+            
+            LastUpdate = DateTime.Now;
         }
     }
 }

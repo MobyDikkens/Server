@@ -52,10 +52,11 @@
     <Compile Include="ClientContext.cs" />
     <Compile Include="ClientModel\Client.cs" />
     <Compile Include="ClientModel\ClientDirectory.cs" />
-    <Compile Include="CloudConfigs\CloudConfig.cs" />
+    <Compile Include="CloudConfigs\WorkingDirectoryConfig.cs" />
     <Compile Include="Configurations\ClientConfigurations.cs" />
     <Compile Include="Configurations\ClientDirectoryConfiguration.cs" />
     <Compile Include="EServer.cs" />
+    <Compile Include="PackageComposer\PakageDisassembly.cs" />
     <Compile Include="StartingConfigs\ServerConfig.cs" />
     <Compile Include="StartingConfigs\ServerStarting.cs" />
     <Compile Include="Program.cs" />

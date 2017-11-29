@@ -112,60 +112,37 @@ namespace Server
             }
             else
             {
+                try
+                {
+                    package += Unpackage(client);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                finally
+                {
 
-                    while (true)
+                    try
                     {
-                        //stream to work with buffer
-                        NetworkStream networkStream = null;
+                        client.Close();
+                    }
+                    catch (Exception ex)
+                    {
 
-                        try
-                        {
-                            networkStream = client.GetStream();
-                            package += Unpackage(networkStream);
-                        }
-                        catch(Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
-                        }
-                        finally
-                        {
-
-                            try
-                            {
-                                client.Close();
-                                networkStream.Close();
-                            }
-                            catch(Exception ex)
-                            {
-
-                                Console.WriteLine(ex.ToString());
-
-                            }
-
-                        }
-
-                        //processing a package and adding it to the end of string value
-
-
-                        //Check if it is the end of the package
-                        if (package.IndexOf("\0") > -1)
-                        {
-                            //Find the end of the package
-                            package = package.Substring(0, package.IndexOf("\0"));
-
-                            break;
-                        }
-
+                        Console.WriteLine(ex.ToString());
 
                     }
 
+                }
 
-                    Console.WriteLine();
-                    Console.WriteLine("*****************************************************************************");
-                    Console.WriteLine("Recieved data:{0}", package);
-                    //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
-                    Console.WriteLine("*****************************************************************************");
-                    Console.WriteLine();
+
+                Console.WriteLine();
+                Console.WriteLine("*****************************************************************************");
+                Console.WriteLine("Recieved data:{0}", package);
+                //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
+                Console.WriteLine("*****************************************************************************");
+                Console.WriteLine();
 
             }
 
@@ -183,22 +160,64 @@ namespace Server
 
 
         //Make it ~ integrated into a NetworkStream
-        private static string Unpackage(NetworkStream networkStream)
+        private static string Unpackage(TcpClient client)
         {
             //amoun of bytes and package buffer
-            int rcvBytes = 65535;
-            byte[] rcvBuffer = new byte[rcvBytes];
 
+            int rcvBytes = 65535;
+            //Buffer
+            byte[] rcvBuffer = new byte[rcvBytes];
+            
+            //Client stream
+            NetworkStream networkStream = null;
             try
             {
-                networkStream.Read(rcvBuffer, 0, rcvBytes);
+                networkStream = client.GetStream();
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                return null;
             }
 
-            return Encoding.ASCII.GetString(rcvBuffer, 0, rcvBytes);
+            //Result
+            string package = String.Empty;
+
+            while (true)
+            {
+
+
+                try
+                {
+                    networkStream.Read(rcvBuffer, 0, rcvBytes);
+                    package += Encoding.ASCII.GetString(rcvBuffer, 0, rcvBytes);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+
+                //processing a package and adding it to the end of string value
+
+
+                //Check if it is the end of the package
+                if (package.IndexOf("\0") > -1 || !networkStream.DataAvailable)
+                {
+                    //Find the end of the package
+                    if (package.Contains("\0"))
+                    {
+                        package = package.Substring(0, package.IndexOf("\0"));
+                    }
+                    break;
+                }
+
+            }
+
+            networkStream.Close();
+            client.Close();
+
+            return package;
         }
     }
 }

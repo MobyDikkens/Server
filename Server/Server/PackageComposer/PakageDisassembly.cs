@@ -46,6 +46,10 @@ namespace Server.PackageComposer
 
             string[] pack = package.Split('\n');
 
+            Console.WriteLine();
+
+            Console.WriteLine("Split the package:");
+
             for (int i = 0; i < pack.Length; i++)
             {
                 //Check if it is the end + write out pack in unpack array with corrections
@@ -79,12 +83,16 @@ namespace Server.PackageComposer
 
                 }
 
+                Console.Write("{0}:",i+1);
                 Console.WriteLine(pack[i]);
-                Console.WriteLine("*******************");
+                
             }
 
+
+            Console.WriteLine("*****************************************************************************");
+
             //If package structure is inccorect
-            if(!flags)
+            if (!flags)
             {
                 UnknownPakageException ex = new UnknownPakageException();
 

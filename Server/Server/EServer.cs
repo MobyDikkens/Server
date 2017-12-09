@@ -38,6 +38,7 @@ namespace Server
             try
             {
                 listener = new TcpListener(endPoint);
+                Console.WriteLine("Server have been sucesfully started\nAdress:{0}:{1}", endPoint.Address,endPoint.Port);
             }
             catch(Exception ex)
             {
@@ -51,6 +52,7 @@ namespace Server
             try
             {
                 listener = new TcpListener(endPoint);
+                Console.WriteLine("Server have been sucesfully started\nAdress:{0}", endPoint.ToString());
             }
             catch (Exception ex)
             {
@@ -64,6 +66,7 @@ namespace Server
             try
             {
                 listener.Start();
+                Console.WriteLine("Starting to Listen:");
             }
             catch(Exception ex)
             {
@@ -83,6 +86,8 @@ namespace Server
                 {
                     //Our client
                     TcpClient client = listener.AcceptTcpClient();
+                    Console.WriteLine();
+                    Console.WriteLine("Client have been connected:{0}",client.Client.RemoteEndPoint);
                     Thread thread = null;
 
                     thread = new Thread(ClientHandler);
@@ -104,6 +109,8 @@ namespace Server
             TcpClient client = o as TcpClient;
             string package = String.Empty;
 
+            bool Eflags = false;
+
             //package = "admin,qwerty12345";
 
             //if we cannot implement o as TcpClient
@@ -120,53 +127,50 @@ namespace Server
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
+                    Eflags = true;
                 }
-                finally
-                {
-
-                    try
-                    {
-                        //client.Close();
-                    }
-                    catch (Exception ex)
-                    {
-
-                        Console.WriteLine(ex.ToString());
-
-                    }
-
-                }
-
+                
 
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************************************");
-                Console.WriteLine("Recieved data:{0}", package);
+                Console.WriteLine();
+               // Console.WriteLine("*****************************************************************************");
+                Console.WriteLine("Recieved data:\n{0}", package);
                 //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
-                Console.WriteLine("*****************************************************************************"); 
+                Console.WriteLine(); 
+                Console.WriteLine();
                 Console.WriteLine();
 
             }
 
-            //to process our requests
-            PackageProcessor.Processor processor = default(PackageProcessor.Processor);
-
-            try
+            if (!Eflags)
             {
-                PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(package);
+                //to process our requests
+                PackageProcessor.Processor processor = default(PackageProcessor.Processor);
+                //networkStream.Close();
+                try
+                {
+                    PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(package);
 
-                //unpack array of DML request
-                string[] unpack = disassembly.Unpack();
+                    //unpack array of DML request
+                    string[] unpack = disassembly.Unpack();
 
-                //initialize processor
-                processor = new PackageProcessor.Processor(client, unpack);
+                    //initialize processor
+                    processor = new PackageProcessor.Processor(client, unpack);
+                }
+                catch (PackageComposer.UnknownPakageException)//if unkn pckg
+                {
+                    Console.WriteLine("UnknownPackage");
+                    PackageProcessor.Processor.UnknownPakage(client);
+                }
+                catch//other
+                {
+                    Console.WriteLine("BadRequest");
+                    PackageProcessor.Processor.BadRequest(client);
+                }
             }
-            catch(PackageComposer.UnknownPakageException)//if unkn pckg
+            else
             {
-                PackageProcessor.Processor.UnknownPakage(client);
-            }
-            catch//other
-            {
-                PackageProcessor.Processor.BadRequest(client);
+                client.Close();
             }
 
         }
@@ -212,20 +216,26 @@ namespace Server
 
                 //processing a package and adding it to the end of string value
 
-
-                //Check if it is the end of the package
-                if (!networkStream.DataAvailable)
+                try
                 {
-                    //Find the end of the package
-                    if (package.Contains("\0"))
+                    //Check if it is the end of the package
+                    if (!networkStream.DataAvailable)
                     {
-                        package = package.Substring(0, package.IndexOf("\0"));
+                        //Find the end of the package
+                        if (package.Contains("\0"))
+                        {
+                            package = package.Substring(0, package.IndexOf("\0"));
+                        }
+                        break;
                     }
-                    break;
+                }
+                catch(Exception ex)
+                {
+                    networkStream.Close();
+                    throw ex;
                 }
                 
             }
-
             return package;
         }
     }

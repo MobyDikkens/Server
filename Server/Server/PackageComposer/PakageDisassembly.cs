@@ -8,32 +8,103 @@ namespace Server.PackageComposer
 {
     class PakageDisassembly
     {
+
+        //DML package commands
+        public enum DMLCommands { Autorization = 0, GetLastUpdate, GetFile, SendFile }
+
+        //Package
         private string package;
+
+        private string[] unpack;
 
         public PakageDisassembly(string package)
         {
-            this.package = package;
+            if (package != String.Empty)
+            {
+                //Check if we have a DML protocol if not throw the exception
+                if (package.Substring(0, 3) != "DML")
+                {
+                    UnknownPakageException exception = new UnknownPakageException();
+
+                    throw exception;
+                }
+                else
+                {
+                    this.package = package;
+                }
+            }
+            else
+            {
+                UnknownPakageException exception = new UnknownPakageException();
+
+                throw exception;
+
+            }
+
+            //To check if it is a \r in the end of string[]
+            bool flags = false;
+
+            string[] pack = package.Split('\n');
+
+            for (int i = 0; i < pack.Length; i++)
+            {
+                //Check if it is the end + write out pack in unpack array with corrections
+                if (pack[i] == "\r")
+                {
+                    int lenth = i;
+
+                    unpack = new string[lenth];
+
+                    for (int j = 0; j < lenth; j++)
+                    {
+                        unpack[j] = pack[j];
+                    }
+
+                    flags = true;
+
+                    break;
+
+                }
+
+                //remove /r
+                try
+                {
+                    pack[i] = pack[i].Remove(pack[i].IndexOf('\r'));
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    UnknownPakageException ex = new UnknownPakageException();
+
+                    throw ex;
+
+                }
+
+                Console.WriteLine(pack[i]);
+                Console.WriteLine("*******************");
+            }
+
+            //If package structure is inccorect
+            if(!flags)
+            {
+                UnknownPakageException ex = new UnknownPakageException();
+
+                throw ex;
+            }
+            else
+            {
+                //Inittialize a package array field
+                unpack = pack;
+            }
+
+
+
         }
 
-        public string GetLogin()
+        //To get an unpack package array
+        public string[] Unpack()
         {
-            string login = String.Empty;
-
-            login = package.Split(',')[0];
-
-            return login;
+            return unpack;
         }
 
-        public string GetPassword()
-        {
-            string password = String.Empty;
-
-            int a = this.GetLogin().Length + 1;
-            int b = package.Length - this.GetLogin().Length - 1;
-
-            password = package.Substring(a,b);
-
-            return password;
-        }
     }
 }

@@ -11,6 +11,16 @@ namespace Server
     {
         public DbSet<ClientModel.Client> Clients { get; set; }
 
-        public DbSet<ClientModel.ClientDirectory> ClientDirectories { get; set; }
+
+
+       /* public IQueryable<ClientModel.Client> GetClients()
+        {
+            using (var context = new ClientContext())
+            {
+
+                return context.Set<ClientModel.Client>();
+            }
+        }*/
+
     }
 }

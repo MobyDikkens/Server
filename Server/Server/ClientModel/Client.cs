@@ -11,7 +11,7 @@ namespace Server.ClientModel
        public int Id { get; set; }
 
         //To store a client working directory
-        public ClientDirectory WorkingDirectory { get; private set; }
+        public string WorkingDirectory { get; private set; }
 
         //To save a client last update
         public DateTime LastUpdate { get; set; }
@@ -21,7 +21,7 @@ namespace Server.ClientModel
         public string Password { get; private set; }
 
         //Add a non-required parametr
-        public Client(string login,string password,ClientDirectory workingDirectory = null)
+        public Client(string login,string password,string workingDirectory = default(string))
         {
             Login = login;
             Password = password;
@@ -29,5 +29,14 @@ namespace Server.ClientModel
             
             LastUpdate = DateTime.Now;
         }
+
+        public Client()
+        {
+            Login = default(string);
+            Password = default(string);
+            WorkingDirectory = default(string);
+            LastUpdate = DateTime.Now;
+        }
+
     }
 }

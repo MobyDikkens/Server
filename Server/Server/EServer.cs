@@ -87,7 +87,8 @@ namespace Server
 
                     thread = new Thread(ClientHandler);
 
-                    thread.Start(client);
+
+                    thread.Start(client); 
                 }
                 catch(Exception ex)
                 {
@@ -114,7 +115,7 @@ namespace Server
             {
                 try
                 {
-                    package += Unpackage(client);
+                    package = Unpackage(client);
                 }
                 catch (Exception ex)
                 {
@@ -125,7 +126,7 @@ namespace Server
 
                     try
                     {
-                        client.Close();
+                        //client.Close();
                     }
                     catch (Exception ex)
                     {
@@ -141,20 +142,32 @@ namespace Server
                 Console.WriteLine("*****************************************************************************");
                 Console.WriteLine("Recieved data:{0}", package);
                 //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
-                Console.WriteLine("*****************************************************************************");
+                Console.WriteLine("*****************************************************************************"); 
                 Console.WriteLine();
 
             }
 
-           /* PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(package);
+            //to process our requests
+            PackageProcessor.Processor processor = default(PackageProcessor.Processor);
 
-            ClientModel.Client clientmodel= new ClientModel.Client(disassembly.GetLogin(),disassembly.GetPassword());
-
-            using (var db = new ClientContext())
+            try
             {
-                db.Clients.Add(clientmodel);
-                db.SaveChanges();
-            }*/
+                PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(package);
+
+                //unpack array of DML request
+                string[] unpack = disassembly.Unpack();
+
+                //initialize processor
+                processor = new PackageProcessor.Processor(client, unpack);
+            }
+            catch(PackageComposer.UnknownPakageException)//if unkn pckg
+            {
+                PackageProcessor.Processor.UnknownPakage(client);
+            }
+            catch//other
+            {
+                PackageProcessor.Processor.BadRequest(client);
+            }
 
         }
 
@@ -186,7 +199,6 @@ namespace Server
             while (true)
             {
 
-
                 try
                 {
                     networkStream.Read(rcvBuffer, 0, rcvBytes);
@@ -202,7 +214,7 @@ namespace Server
 
 
                 //Check if it is the end of the package
-                if (package.IndexOf("\0") > -1 || !networkStream.DataAvailable)
+                if (!networkStream.DataAvailable)
                 {
                     //Find the end of the package
                     if (package.Contains("\0"))
@@ -211,11 +223,8 @@ namespace Server
                     }
                     break;
                 }
-
+                
             }
-
-            networkStream.Close();
-            client.Close();
 
             return package;
         }

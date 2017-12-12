@@ -87,13 +87,14 @@ namespace Server
                     //Our client
                     TcpClient client = listener.AcceptTcpClient();
                     Console.WriteLine();
-                    Console.WriteLine("Client have been connected:{0}",client.Client.RemoteEndPoint);
+                    Console.WriteLine("Client have been connected:{0}", client.Client.RemoteEndPoint);
                     Thread thread = null;
 
                     thread = new Thread(ClientHandler);
 
 
-                    thread.Start(client); 
+                    thread.Start(client);
+
                 }
                 catch(Exception ex)
                 {
@@ -109,6 +110,7 @@ namespace Server
             TcpClient client = o as TcpClient;
             string package = String.Empty;
 
+            //Error falgs
             bool Eflags = false;
 
             //package = "admin,qwerty12345";
@@ -144,8 +146,9 @@ namespace Server
 
             if (!Eflags)
             {
+
                 //to process our requests
-                PackageProcessor.Processor processor = default(PackageProcessor.Processor);
+                PackageProcessor.RequestProcessor processor = default(PackageProcessor.RequestProcessor);
                 //networkStream.Close();
                 try
                 {
@@ -155,22 +158,27 @@ namespace Server
                     string[] unpack = disassembly.Unpack();
 
                     //initialize processor
-                    processor = new PackageProcessor.Processor(client, unpack);
+                    processor = new PackageProcessor.RequestProcessor(client, unpack);
                 }
                 catch (PackageComposer.UnknownPakageException)//if unkn pckg
                 {
                     Console.WriteLine("UnknownPackage");
-                    PackageProcessor.Processor.UnknownPakage(client);
+                    PackageProcessor.ResponceProcessor.UnknownPakage(client);
                 }
                 catch//other
                 {
                     Console.WriteLine("BadRequest");
-                    PackageProcessor.Processor.BadRequest(client);
+                    PackageProcessor.ResponceProcessor.BadRequest(client);
                 }
             }
             else
             {
-                client.Close();
+                try
+                {
+                    client.Close();
+                }
+                catch
+                { }
             }
 
         }
@@ -231,8 +239,13 @@ namespace Server
                 }
                 catch(Exception ex)
                 {
-                    networkStream.Close();
-                    throw ex;
+                    try
+                    {
+                        networkStream.Close();
+                        throw ex;
+                    }
+                    catch
+                    { }
                 }
                 
             }

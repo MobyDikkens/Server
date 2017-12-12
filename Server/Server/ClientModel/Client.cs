@@ -25,7 +25,7 @@ namespace Server.ClientModel
         {
             Login = login;
             Password = password;
-            WorkingDirectory = workingDirectory;
+            WorkingDirectory = CloudConfigs.WorkingDirectoryConfig.GetWorkingDirectory() + login;
             
             LastUpdate = DateTime.Now;
         }

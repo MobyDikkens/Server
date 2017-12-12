@@ -57,7 +57,8 @@
     <Compile Include="PackageComposer\PackageAssembly.cs" />
     <Compile Include="PackageComposer\PakageDisassembly.cs" />
     <Compile Include="PackageComposer\Exceptions\UnknownPakage.cs" />
-    <Compile Include="PackageProcessor\Processor.cs" />
+    <Compile Include="PackageProcessor\RequestProcessor.cs" />
+    <Compile Include="PackageProcessor\ResponceProcessor.cs" />
     <Compile Include="StartingConfigs\ServerConfig.cs" />
     <Compile Include="StartingConfigs\ServerStarting.cs" />
     <Compile Include="Program.cs" />

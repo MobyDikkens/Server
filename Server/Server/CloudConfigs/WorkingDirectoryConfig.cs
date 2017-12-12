@@ -65,5 +65,42 @@ namespace Server.CloudConfigs
             return catalogTree;
 
         }
+
+        public static void CreateDirectory(string path,string name)
+        {
+            try
+            {
+                DirectoryInfo directory = Directory.CreateDirectory(path + name);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static string[][] GetLastUpdate(string path,string workingDir)
+        {
+            //Gets the catalog tree for a client
+            string[][] catalogTree = GetCatalogTree(path);
+
+            //add an last upate to each one of file
+            for(int i = 0;i<catalogTree.Length;i++)
+            {
+                for(int j=0;j<catalogTree[i].Length;j++)
+                {
+                    catalogTree[i][j] += "\\"+Directory.GetLastWriteTime(catalogTree[i][j]);
+
+                    //first entry - to delete paths in comp
+                    int firstEntry = catalogTree[i][j].IndexOf(workingDir);
+
+                    catalogTree[i][j] = catalogTree[i][j].Substring(firstEntry, catalogTree[i][j].Length - firstEntry - 1);
+                }
+            }
+
+            return catalogTree;
+
+        }
+
+
     }
 }

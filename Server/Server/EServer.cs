@@ -146,30 +146,12 @@ namespace Server
 
             if (!Eflags)
             {
+                //Entity to make a desicion what type of request is we have
+                Processor processor = new Solution();
 
-                //to process our requests
-                PackageProcessor.RequestProcessor processor = default(PackageProcessor.RequestProcessor);
-                //networkStream.Close();
-                try
-                {
-                    PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(package);
+                //Process it
+                processor.FindSolution(client, package);
 
-                    //unpack array of DML request
-                    string[] unpack = disassembly.Unpack();
-
-                    //initialize processor
-                    processor = new PackageProcessor.RequestProcessor(client, unpack);
-                }
-                catch (PackageComposer.UnknownPakageException)//if unkn pckg
-                {
-                    Console.WriteLine("UnknownPackage");
-                    PackageProcessor.ResponceProcessor.UnknownPakage(client);
-                }
-                catch//other
-                {
-                    Console.WriteLine("BadRequest");
-                    PackageProcessor.ResponceProcessor.BadRequest(client);
-                }
             }
             else
             {

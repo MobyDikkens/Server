@@ -12,95 +12,93 @@ namespace Server
     class Solution:Processor
     {
         TcpClient client = default(TcpClient);
-
-        private const int keyLenth = 24;
-
-
-        /*HTTP/1.1 101 Switching Protocols
-        Upgrade: websocket
-        Connection: Upgrade
-        Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
-        Sec-WebSocket-Protocol: chat*/
-
-
-        string WebResponce = "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: ";
+        
+            
 
         //Realize what what type of protocol is we working with
         public void FindSolution(TcpClient client,string request)
         {
             this.client = client;
 
-            string clientKey = default(string);
-
             try
             {
                 if (request.IndexOf("HTTP") > -1)
                 {
-                    if (request.IndexOf("Sec - WebSocket - Key: ") > -1)
+                    if (request.IndexOf("Sec-WebSocket-Key: ") > -1)
                     {
-                        string separator = "Sec - WebSocket - Key: ";
-
-                        clientKey = request.Substring(request.IndexOf(separator) + separator.Length, keyLenth);
 
                         //Send a responce "HADSHAKE"
-                        WebSocketProcessor(clientKey);
+                        WebSocketHandler(request);
                     }
                     else
                     {
-                        PackageProcessor.ResponceProcessor.UnknownPakage(client);
+                        Responce(PackageProcessor.ResponceProcessor.UnknownPakage());
                     }
 
 
                 }
                 else
                 {
-                    DMLProcessor(request);
+                    DMLHandler(request);
                 }
             }
             catch
             {
                 try
                 {
-                    PackageProcessor.ResponceProcessor.BadRequest(client);
+                    Responce(PackageProcessor.ResponceProcessor.BadRequest());
                 }
                 catch
                 { }
             }
         }
 
-        //Make a processing of a WebSockets requests
-        private void WebSocketProcessor(string key)
-        {
-            NetworkStream stream = default(NetworkStream);
 
+
+        private void Responce(byte[] responce)
+        {
             try
             {
-                //Calculate a responce key
-                key += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+                NetworkStream networkStream = client.GetStream();
 
-                var hash = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(key));
-                WebResponce += string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
-                WebResponce += "\r\nSec-WebSocket-Protocol: chat\r\n\r\n";
+                networkStream.Write(responce, 0, responce.Length);
 
-                //Send a responce
-                stream = client.GetStream();
-                byte[] buffer = Encoding.ASCII.GetBytes(WebResponce);
-                stream.Write(buffer, 0, buffer.Length);
-            }
-            catch
-            {
                 try
                 {
-                    stream.Close();
                     client.Close();
                 }
                 catch
                 { }
+
+           }
+            catch
+            {
+                try
+                {
+                    client.Close();
+                }
+                catch
+                {
+
+                }
             }
         }
 
+        //Make a processing of a WebSockets requests
+        private void WebSocketHandler(string request)
+        {
+
+            try
+            {
+                WebSocketProcessor.RequestProcessor processor = new WebSocketProcessor.RequestProcessor(client, request);
+
+            }
+            catch
+            { }
+        }
+
         //Make a processing of DML Requests
-        private void DMLProcessor(string request)
+        private void DMLHandler(string request)
         {
             //to process our requests
             PackageProcessor.RequestProcessor processor = default(PackageProcessor.RequestProcessor);
@@ -113,17 +111,25 @@ namespace Server
                 string[] unpack = disassembly.Unpack();
 
                 //initialize processor
-                processor = new PackageProcessor.RequestProcessor(client, unpack);
+                processor = new PackageProcessor.RequestProcessor(unpack);
+
+                byte[] responce = processor.GetResponce();
+
+
+                Responce(responce);
+
             }
             catch (PackageComposer.UnknownPakageException)//if unkn pckg
             {
                 Console.WriteLine("UnknownPackage");
-                PackageProcessor.ResponceProcessor.UnknownPakage(client);
+                PackageProcessor.ResponceProcessor.UnknownPakage();
+                byte[] responce = processor.GetResponce();
             }
             catch//other
             {
                 Console.WriteLine("BadRequest");
-                PackageProcessor.ResponceProcessor.BadRequest(client);
+                PackageProcessor.ResponceProcessor.BadRequest();
+                byte[] responce = processor.GetResponce();
             }
         }
 

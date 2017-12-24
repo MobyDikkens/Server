@@ -12,17 +12,18 @@ namespace Server.PackageProcessor
     class RequestProcessor
     {
         public enum DMLRequests { IsAlive = 0, Register, GetLastUpdate, GetFile, SendFile }
-
-        private TcpClient client;
-
+        
         private string[] package;
 
-        public RequestProcessor(TcpClient client,string[] package)
+        private byte[] responce = default(byte[]);
+
+        public RequestProcessor(string[] package)
         {
             try
             {
-                this.client = client;
+
                 this.package = package;
+
             }
             catch(Exception)
             {
@@ -35,6 +36,19 @@ namespace Server.PackageProcessor
             RequestType(package[1]);
             
 
+        }
+
+
+        public byte[] GetResponce()
+        {
+            try
+            {
+                return this.responce;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void RequestType(string request)
@@ -74,7 +88,7 @@ namespace Server.PackageProcessor
 
             bool flags = false;
 
-            ResponceProcessor responce = new ResponceProcessor(client);
+            ResponceProcessor responce = new ResponceProcessor();
 
 
             //trying to send responce
@@ -100,13 +114,13 @@ namespace Server.PackageProcessor
                 }
 
 
-                responce.IsAlive(flags);
+                this.responce = responce.IsAlive(flags);
 
             }
             catch//if there is an exception
             {
 
-                ResponceProcessor.BadRequest(this.client);
+                this.responce = ResponceProcessor.BadRequest();
 
             }
 
@@ -117,7 +131,7 @@ namespace Server.PackageProcessor
         //Processing Register responce
         private void Register()
         {
-            ResponceProcessor responce = new ResponceProcessor(client);
+            ResponceProcessor responce = new ResponceProcessor();
 
             try
             {
@@ -157,7 +171,7 @@ namespace Server.PackageProcessor
 
                     //Send a responce
 
-                    responce.Register(flags);
+                    this.responce = responce.Register(flags);
                 }
 
             }
@@ -167,7 +181,7 @@ namespace Server.PackageProcessor
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                ResponceProcessor.BadRequest(client);
+                this.responce = ResponceProcessor.BadRequest();
             }
 
         }
@@ -175,7 +189,7 @@ namespace Server.PackageProcessor
         private void GetLastUpdate()
         {
 
-            ResponceProcessor responce = new ResponceProcessor(client);
+            ResponceProcessor responce = new ResponceProcessor();
 
             try
             {
@@ -231,13 +245,13 @@ namespace Server.PackageProcessor
                 }
 
 
-                responce.GetLastUpdate(message);
+                this.responce = responce.GetLastUpdate(message);
 
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                ResponceProcessor.BadRequest(client);
+                this.responce = ResponceProcessor.BadRequest();
             }
 
         }

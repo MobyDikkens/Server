@@ -9,3 +9,4 @@ C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.dll
 C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.xml
 C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\MobyDi\Desktop\Server\Server\Server\bin\Debug\websocket-sharp.dll

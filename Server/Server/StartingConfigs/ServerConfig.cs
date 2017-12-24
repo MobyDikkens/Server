@@ -28,6 +28,25 @@ namespace Server.Models
             return null;
         }
 
+        public static int GetWsPort()
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("C:\\Users\\MobyDi\\Desktop\\Server\\Server\\Server\\Resources\\ws.port"))
+                {
+                    String port = sr.ReadToEnd();
+                    return Convert.ToInt32(port);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return default(int);
+        }
+
         public static string GetPort()
         {
             try

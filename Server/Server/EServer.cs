@@ -7,6 +7,8 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using Server.Models;
+using WebSocketSharp;
+using WebSocketSharp.Server;
 
 namespace Server
 {
@@ -19,12 +21,19 @@ namespace Server
         //our server (~socket)
         private TcpListener listener;
 
+        //our web socket server
+        private WebSocketServer wslistener;
+
+        private static int wsPort;
+
         //constructor
         public EServer()
         {
             try
             {
-                endPoint = new IPEndPoint(IPAddress.Parse(ServerConfig.GetIp()), Convert.ToInt32(ServerConfig.GetPort()));
+                endPoint = new IPEndPoint(IPAddress.Any, Convert.ToInt32(ServerConfig.GetPort()));
+
+                wsPort = ServerConfig.GetWsPort();
             }
             catch(Exception ex)
             {
@@ -39,6 +48,11 @@ namespace Server
             {
                 listener = new TcpListener(endPoint);
                 Console.WriteLine("Server have been sucesfully started\nAdress:{0}:{1}", endPoint.Address,endPoint.Port);
+
+                wslistener = new WebSocketServer(IPAddress.Any, wsPort);
+                Console.WriteLine("WS Server have been sucesfully started\nAdress:{0}:{1}", IPAddress.Any, wsPort);
+
+
             }
             catch(Exception ex)
             {
@@ -66,6 +80,9 @@ namespace Server
             try
             {
                 listener.Start();
+                wslistener.Start();
+
+                wslistener.AddWebSocketService<WSHandlers.MessageControlles>("/",() => new WSHandlers.MessageControlles() { IgnoreExtensions = true });
                 Console.WriteLine("Starting to Listen:");
             }
             catch(Exception ex)

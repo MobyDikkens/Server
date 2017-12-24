@@ -56,6 +56,7 @@
     <Compile Include="ClientModel\Client.cs" />
     <Compile Include="CloudConfigs\WorkingDirectoryConfig.cs" />
     <Compile Include="ContextConfigurations\ClientConfigurations.cs" />
+    <Compile Include="Enums\ResponceType.cs" />
     <Compile Include="EServer.cs" />
     <Compile Include="PackageComposer\PackageAssembly.cs" />
     <Compile Include="PackageComposer\PakageDisassembly.cs" />

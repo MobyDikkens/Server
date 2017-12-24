@@ -23,8 +23,8 @@ namespace Server.PackageProcessor
 
             try
             {
-
-                byte[] responce = Encoding.ASCII.GetBytes("DML\r\nUnknownPackage\r\n\r\n");
+                PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UnknownPackage);
+                byte[] responce = assembly.Assemble();
 
                 return responce;
 
@@ -43,7 +43,8 @@ namespace Server.PackageProcessor
 
             try
             {
-                byte[] responce = Encoding.ASCII.GetBytes("DML\r\nBadRequest\r\n\r\n");
+                PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+                byte[] responce = assembly.Assemble();
 
                 return responce;
 
@@ -58,6 +59,7 @@ namespace Server.PackageProcessor
 
         public byte[] IsAlive(bool flags)
         {
+            byte[] responce = default(byte[]);
 
             //trying to send responce
             try
@@ -65,18 +67,19 @@ namespace Server.PackageProcessor
 
                 if (flags)
                 {
-
-                    byte[] responce = Encoding.ASCII.GetBytes("DML\r\nUserExists\r\n\r\n");
-
-                   return responce;
+                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserExists);
+                    responce = assembly.Assemble();
                 }
                 else
                 {
 
-                    byte[] responce = Encoding.ASCII.GetBytes("DML\r\nUnknownUser\r\n\r\n");
-
-                    return responce;
+                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
+                    responce = assembly.Assemble();
                 }
+
+
+                return responce;
+
             }
             catch//if there is an exception
             {
@@ -92,22 +95,24 @@ namespace Server.PackageProcessor
         public byte[] Register(bool flags)
         {
 
+            byte[] responce = default(byte[]);
+
             try
             {
-                string message = default(string);
 
                 if(!flags)//if already registered
                 {
-                    message = "DML\r\nRegistrationOk\r\n\r\n";
+                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.RegistrationOk);
+                    responce = assembly.Assemble();
                 }
                 else
                 {
-                    message = "DML\r\nUserIsAlreadyExists\r\n\r\n";
+                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserIsAlreadyExists);
+                    responce = assembly.Assemble();
                 }
 
                 //Send a responce
 
-                byte[] responce = Encoding.ASCII.GetBytes(message);
 
                 return responce;
             }
@@ -123,11 +128,15 @@ namespace Server.PackageProcessor
         public byte[] GetLastUpdate(string message = default(string))
         {
 
-        
+            PackageComposer.PackageAssembly assembly;
+
+            byte[] responce = default(byte[]);
 
             if (message == default(string))
             {
-                message = "DML\r\nUserNotFond\r\n\r\n";
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
+
+                responce = assembly.Assemble();
             }
 
             try
@@ -141,7 +150,9 @@ namespace Server.PackageProcessor
 
                 Console.WriteLine();
 
-                byte[] responce = Encoding.ASCII.GetBytes(message);
+                
+
+                responce = Encoding.ASCII.GetBytes(message.Replace(@"\","/"));
 
                 return responce;
  
@@ -150,6 +161,47 @@ namespace Server.PackageProcessor
             catch (Exception)
             {
                 return null;
+            }
+
+        }
+
+
+        public byte[] GetFile(string path,bool flags)
+        {
+
+            string message = default(string);
+
+            try
+            {
+
+
+               
+
+                //if client exists send all dates to him him
+                if (flags)
+                {
+
+                    string file = CloudConfigs.WorkingDirectoryConfig.GetFile(path);
+
+                    if (file != default(string))
+                    {
+                        message = "DML\r\nOk\r\n";
+                        message += file;
+                        message += "\r\n\r\n";
+                    }
+
+                }
+                else
+                {
+                    message = "DML\r\nFileNotFound\r\n\r\n";
+                }
+
+                return Encoding.ASCII.GetBytes(message);
+            }
+            catch
+            {
+                message = "DML\r\nFileNotFound\r\n\r\n";
+                return Encoding.ASCII.GetBytes(message);
             }
 
         }

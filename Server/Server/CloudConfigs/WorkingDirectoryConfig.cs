@@ -37,21 +37,29 @@ namespace Server.CloudConfigs
             try
             {
                 string[] folders = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
-                string[] files = null;
+                string[] files = Directory.GetFiles(path,"*");
 
-                catalogTree = new string[folders.Length][];
+                catalogTree = new string[folders.Length+files.Length][];
+
+                int ptr = files.Length;
+
+                for(int i=0;i<files.Length;i++)
+                {
+                    catalogTree[i] = new string[1];
+                    catalogTree[i][0] = files[i];
+                }
 
                 for(int i = 0;i<folders.Length;i++)
                 {
                     files = Directory.GetFiles(folders[i]);
 
-                    catalogTree[i] = new string[files.Length + 1];
+                    catalogTree[i + ptr] = new string[files.Length + 1];
 
-                    catalogTree[i][0] = folders[i];
+                    catalogTree[i + ptr][0] = folders[i] + "/";
 
                     for(int j=1;j<files.Length + 1;j++)
                     {
-                        catalogTree[i][j] = files[j - 1];
+                        catalogTree[i + ptr ][j] = files[j - 1];
                     }
 
                 }
@@ -88,16 +96,45 @@ namespace Server.CloudConfigs
             {
                 for(int j=0;j<catalogTree[i].Length;j++)
                 {
-                    catalogTree[i][j] += "\\"+Directory.GetLastWriteTime(catalogTree[i][j]);
+                    catalogTree[i][j] += "\n"+Directory.GetLastWriteTime(catalogTree[i][j]);
 
                     //first entry - to delete paths in comp
-                    int firstEntry = catalogTree[i][j].IndexOf(workingDir);
+                    int firstEntry = catalogTree[i][j].IndexOf(workingDir) + workingDir.Length;
 
                     catalogTree[i][j] = catalogTree[i][j].Substring(firstEntry, catalogTree[i][j].Length - firstEntry - 1);
                 }
             }
 
             return catalogTree;
+
+        }
+
+        public static string GetFile(string path)
+        {
+            try
+            {
+                path.Replace("/", "\\");
+
+                string result = default(string);
+
+                //string Path = GetWorkingDirectory() + path;
+
+               // Path.Replace("\\\\", "\\");
+
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    result = sr.ReadToEnd();
+                }
+
+                    return result;
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+
+                return default(string);
+            }
 
         }
 

@@ -258,8 +258,50 @@ namespace Server.PackageProcessor
 
         private void GetFile()
         {
+            ResponceProcessor responce = new ResponceProcessor();
 
-        }
+            try
+            {
+
+                //if user was logged
+                bool flags = false;
+
+                string path = default(string);
+                
+
+                //open a db
+                using (var db = new ClientContext())
+                {
+                    //list of clients in db
+                    IQueryable<ClientModel.Client> queryable = db.Clients;
+
+                   
+
+                    //trying to find our new client
+                    foreach (var tmp in queryable)
+                    {
+                        if (tmp.Login == package[2] && tmp.Password == package[3])//if we is already exist
+                        {
+                            path = tmp.WorkingDirectory;
+                            flags = true;
+                            break;
+                        }
+                    }
+
+                    path += "\\";
+                    path += package[4];
+
+                    //if client exists send all dates to him him
+                    this.responce = responce.GetFile(path, flags);
+
+
+                }
+            }
+            catch
+            {
+                this.responce = ResponceProcessor.BadRequest();
+            }
+        }    
 
         private void SendFile()
         {

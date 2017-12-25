@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 
+
 namespace Server
 {
     //A class that implements Processor functions
@@ -59,11 +60,13 @@ namespace Server
         {
             try
             {
-                ResponceVizualizer.Show(responce);
+                var changedResponce = AddPackageSize(responce);
+
+                ResponceVizualizer.Show(changedResponce);
 
                 NetworkStream networkStream = client.GetStream();
 
-                networkStream.Write(responce, 0, responce.Length);
+                networkStream.Write(changedResponce, 0, changedResponce.Length);
 
                 try
                 {
@@ -85,6 +88,38 @@ namespace Server
                 }
             }
         }
+
+
+        private byte[] AddPackageSize(byte[] responce)
+        {
+            try
+            {
+                //Special for Aleksei add 4 
+                byte[] size = BitConverter.GetBytes(responce.Length);
+
+                byte[] result = new byte[size.Length + responce.Length];
+
+                for (int i = 0; i < size.Length; i++)
+                {
+                    result[i] = size[i];
+                }
+
+                int ptr = size.Length;
+
+                for (int i = 0; i < responce.Length; i++)
+                {
+                    result[i + ptr] = responce[i];
+                }
+
+                return result;
+            }
+            catch
+            {
+                PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+                return assembly.Assemble();
+            }
+        }
+
 
         //Make a processing of a WebSockets requests
         private void WebSocketHandler(string request)

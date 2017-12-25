@@ -80,7 +80,7 @@ namespace Server.PackageComposer
 
         public byte[] Assemble()
         {
-            return Encoding.ASCII.GetBytes(this.assembly);
+            return Encoding.UTF8.GetBytes(this.assembly);
         }
 
         public override string ToString()
@@ -92,10 +92,10 @@ namespace Server.PackageComposer
         {
 
             //DML\r\nOk\r\n
-            byte[] first = Encoding.ASCII.GetBytes(assembly);
+            byte[] first = Encoding.UTF8.GetBytes(assembly);
 
             //\r\n\r\n
-            byte[] end = Encoding.ASCII.GetBytes("\r\n\r\n");
+            byte[] end = Encoding.UTF8.GetBytes("\r\n\r\n");
 
             //our responce
             byte[] result = new byte[file.Length + first.Length + end.Length];
@@ -124,7 +124,7 @@ namespace Server.PackageComposer
                 result[i + ptr] = end[i];
             }
 
-            assembly = Encoding.ASCII.GetString(result);
+            assembly = Encoding.UTF8.GetString(result);
 
             return result;
 
@@ -151,7 +151,7 @@ namespace Server.PackageComposer
             assembly += "\r\n\r\n";
 
 
-            assembly.Replace(@"\", "/");
+            assembly.Replace('\\','/');
         }
 
     }

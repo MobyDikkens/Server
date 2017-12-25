@@ -32,7 +32,7 @@ namespace Server.PackageComposer
                     }
                 case Enums.DMLResponce.Ok:
                     {
-                        assembly += "Ok\r\n\r\n";
+                        assembly += "Ok\r\n";
                         break;
                     }
                 case Enums.DMLResponce.RegistrationOk:
@@ -78,7 +78,18 @@ namespace Server.PackageComposer
             return Encoding.ASCII.GetBytes(this.assembly);
         }
 
+        public void AddFile(byte[] file)
+        {
+            string binFile = default(string);
 
+            for(int i=0;i<file.Length;i++)
+            {
+                binFile += Convert.ToString(file[i]);
+            }
+
+            assembly += binFile;
+            assembly += "\r\n\r\n";
+        }
 
     }
 }

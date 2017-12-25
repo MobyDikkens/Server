@@ -169,7 +169,9 @@ namespace Server.PackageProcessor
         public byte[] GetFile(string path,bool flags)
         {
 
-            string message = default(string);
+            byte[] message = default(byte[]);
+
+            PackageComposer.PackageAssembly assembly;
 
             try
             {
@@ -180,28 +182,33 @@ namespace Server.PackageProcessor
                 //if client exists send all dates to him him
                 if (flags)
                 {
+                    //out file
+                    byte[] file = CloudConfigs.WorkingDirectoryConfig.GetFile(path);
 
-                    string file = CloudConfigs.WorkingDirectoryConfig.GetFile(path);
-
-                    if (file != default(string))
+                    if (file != default(byte[]))
                     {
-                        message = "DML\r\nOk\r\n";
-                        message += file;
-                        message += "\r\n\r\n";
+                        assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.Ok);
+                        assembly.AddFile(file);
+                        message = assembly.Assemble();
+
                     }
 
                 }
                 else
                 {
-                    message = "DML\r\nFileNotFound\r\n\r\n";
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.FileNotFound);
+                    message = assembly.Assemble();
                 }
 
-                return Encoding.ASCII.GetBytes(message);
+                return message;
+
+
             }
             catch
             {
-                message = "DML\r\nFileNotFound\r\n\r\n";
-                return Encoding.ASCII.GetBytes(message);
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
             }
 
         }

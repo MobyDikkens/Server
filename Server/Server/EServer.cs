@@ -212,8 +212,11 @@ namespace Server
 
                 try
                 {
-                    networkStream.Read(rcvBuffer, 0, rcvBytes);
-                    package += Encoding.ASCII.GetString(rcvBuffer, 0, rcvBytes);
+                    if (networkStream.DataAvailable)
+                    {
+                        networkStream.Read(rcvBuffer, 0, rcvBytes);
+                        package += Encoding.ASCII.GetString(rcvBuffer, 0, rcvBytes);
+                    }
                 }
                 catch (Exception ex)
                 {

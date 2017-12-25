@@ -109,31 +109,30 @@ namespace Server.CloudConfigs
 
         }
 
-        public static string GetFile(string path)
+        public static byte[] GetFile(string path)
         {
             try
             {
                 path.Replace("/", "\\");
 
-                string result = default(string);
+                byte[] result = default(byte[]);
 
                 //string Path = GetWorkingDirectory() + path;
 
                // Path.Replace("\\\\", "\\");
 
-                using (StreamReader sr = new StreamReader(path))
-                {
-                    result = sr.ReadToEnd();
-                }
+                
 
-                    return result;
+                result = File.ReadAllBytes(path);
+
+                return result;
 
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
 
-                return default(string);
+                return default(byte[]);
             }
 
         }

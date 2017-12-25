@@ -59,6 +59,8 @@ namespace Server
         {
             try
             {
+                ResponceVizualizer.Show(responce);
+
                 NetworkStream networkStream = client.GetStream();
 
                 networkStream.Write(responce, 0, responce.Length);
@@ -121,15 +123,17 @@ namespace Server
             }
             catch (PackageComposer.UnknownPakageException)//if unkn pckg
             {
-                Console.WriteLine("UnknownPackage");
+                //Console.WriteLine("UnknownPackage");
                 PackageProcessor.ResponceProcessor.UnknownPakage();
                 byte[] responce = processor.GetResponce();
+                Responce(responce);
             }
             catch//other
             {
-                Console.WriteLine("BadRequest");
+                //Console.WriteLine("BadRequest");
                 PackageProcessor.ResponceProcessor.BadRequest();
                 byte[] responce = processor.GetResponce();
+                Responce(responce);
             }
         }
 

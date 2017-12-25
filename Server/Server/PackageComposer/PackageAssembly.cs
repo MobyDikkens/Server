@@ -65,6 +65,11 @@ namespace Server.PackageComposer
                         assembly += "UserNotFound\r\n\r\n";
                         break;
                     }
+                case Enums.DMLResponce.LastUpdates:
+                    {
+                        assembly += "LastUpdates\r\n";
+                        break;
+                    }
                 default:
                     {
                         assembly += "BadRequest\r\n\r\n";
@@ -78,17 +83,75 @@ namespace Server.PackageComposer
             return Encoding.ASCII.GetBytes(this.assembly);
         }
 
-        public void AddFile(byte[] file)
+        public override string ToString()
         {
-            string binFile = default(string);
+            return assembly;
+        }
 
-            for(int i=0;i<file.Length;i++)
+        public byte[] AddFile(byte[] file)
+        {
+
+            //DML\r\nOk\r\n
+            byte[] first = Encoding.ASCII.GetBytes(assembly);
+
+            //\r\n\r\n
+            byte[] end = Encoding.ASCII.GetBytes("\r\n\r\n");
+
+            //our responce
+            byte[] result = new byte[file.Length + first.Length + end.Length];
+
+            //add the first part to the result
+            for(int i=0;i<first.Length;i++)
             {
-                binFile += Convert.ToString(file[i]);
+                result[i] = first[i];
             }
 
-            assembly += binFile;
+            //offset
+            int ptr = first.Length;
+
+            //add file part using offset
+            for (int i = 0;i<file.Length;i++)
+            {
+                result[i + ptr] = file[i];
+            }
+
+            //inc the offset
+            ptr += file.Length;
+
+            //add \r\n\r\n
+            for(int i=0;i<end.Length;i++)
+            {
+                result[i + ptr] = end[i];
+            }
+
+            assembly = Encoding.ASCII.GetString(result);
+
+            return result;
+
+        }
+
+        public void AddUpdates(DateTime dateTime, string path, string clientDirectory)
+        {
+
+            assembly += Convert.ToString(dateTime);
+
+            //assembly += "\r\n";
+
+            string[][] allUpdates = CloudConfigs.WorkingDirectoryConfig.GetLastUpdate(path, clientDirectory);
+
+
+            for (int i = 0; i < allUpdates.Length; i++)
+            {
+                for (int j = 0; j < allUpdates[i].Length; j++)
+                {
+                    assembly += "\r\n" + allUpdates[i][j];
+                }
+            }
+
             assembly += "\r\n\r\n";
+
+
+            assembly.Replace(@"\", "/");
         }
 
     }

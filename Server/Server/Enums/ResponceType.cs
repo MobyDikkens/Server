@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Server.Enums
 {
-    public enum DMLResponce { UnknownPackage = 0, BadRequest, UserExists, UnknownUser, RegistrationOk, UserIsAlreadyExists, UserNotFound, Ok, FileNotFound };
+    public enum DMLResponce { UnknownPackage = 0, BadRequest, UserExists, UnknownUser, RegistrationOk, UserIsAlreadyExists, UserNotFound, Ok, FileNotFound, LastUpdates };
 }

@@ -125,36 +125,41 @@ namespace Server.PackageProcessor
 
 
 
-        public byte[] GetLastUpdate(string message = default(string))
+        public byte[] GetLastUpdate(bool flags,DateTime dateTime,string path,string clientDirectory)
         {
 
             PackageComposer.PackageAssembly assembly;
 
-            byte[] responce = default(byte[]);
-
-            if (message == default(string))
-            {
-                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
-
-                responce = assembly.Assemble();
-            }
-
+            
             try
-            {
+            { 
+
+
+
+                if (flags)
+                {
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.LastUpdates);
+                    assembly.AddUpdates(dateTime, path, clientDirectory);
+                }
+                else
+                {
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
+                }
+            
+            
+
+
 
                 //Send a responce
 
-                Console.WriteLine();
+               // Console.WriteLine();
 
-                Console.WriteLine(message);
+                //Console.WriteLine(assembly);
 
-                Console.WriteLine();
+                //Console.WriteLine();
 
-                
 
-                responce = Encoding.ASCII.GetBytes(message.Replace(@"\","/"));
-
-                return responce;
+                return assembly.Assemble();
  
 
             }
@@ -188,8 +193,8 @@ namespace Server.PackageProcessor
                     if (file != default(byte[]))
                     {
                         assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.Ok);
-                        assembly.AddFile(file);
-                        message = assembly.Assemble();
+                        message = assembly.AddFile(file);
+                        //message = assembly.Assemble();
 
                     }
 

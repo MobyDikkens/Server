@@ -193,7 +193,6 @@ namespace Server.PackageProcessor
 
             try
             {
-                string message = default(string);
 
                 //if user was logged
                 bool flags = false;
@@ -222,30 +221,12 @@ namespace Server.PackageProcessor
                         }
                     }
 
-                    //if client exists send all dates to him him
-                    if (flags)
-                    {
-                        message = "DML\r\nLastUpdate\r\n" + Convert.ToString(dateTime);
-
-                        string[][] allUpdates = CloudConfigs.WorkingDirectoryConfig.GetLastUpdate(path,clietnDir);
-
-
-                        for(int i=0;i<allUpdates.Length;i++)
-                        {
-                            for(int j=0;j<allUpdates[i].Length;j++)
-                            {
-                                message += "\r\n" + allUpdates[i][j];
-                            }
-                        }
-
-                        message += "\r\n\r\n";
-
-                    }
+                    
 
                 }
 
 
-                this.responce = responce.GetLastUpdate(message);
+                this.responce = responce.GetLastUpdate(flags,dateTime,path,clietnDir);
 
             }
             catch (Exception ex)

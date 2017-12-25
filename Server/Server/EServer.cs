@@ -189,8 +189,9 @@ namespace Server
             //amoun of bytes and package buffer
 
             int rcvBytes = 65535;
+            byte[] packageSize = new byte[4];
             //Buffer
-            byte[] rcvBuffer = new byte[rcvBytes];
+            byte[] rcvBuffer;
             
             //Client stream
             NetworkStream networkStream = null;
@@ -212,8 +213,16 @@ namespace Server
 
                 try
                 {
+                    networkStream.Read(packageSize, 0, packageSize.Length);
+
+                    rcvBytes = BitConverter.ToInt32(packageSize, 0);
+                    rcvBuffer = new byte[rcvBytes];
+
                     networkStream.Read(rcvBuffer, 0, rcvBytes);
+
                     package += Encoding.UTF8.GetString(rcvBuffer, 0, rcvBytes);
+
+                    break;
                 }
                 catch (Exception ex)
                 {
@@ -223,7 +232,7 @@ namespace Server
 
                 //processing a package and adding it to the end of string value
 
-                try
+                /*try
                 {
                     //Check if it is the end of the package
                     if (!networkStream.DataAvailable)
@@ -245,7 +254,7 @@ namespace Server
                     }
                     catch
                     { }
-                }
+                }*/
                 
             }
             return package;

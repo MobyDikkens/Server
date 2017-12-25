@@ -100,7 +100,13 @@ namespace Server.PackageComposer
             //our responce
             byte[] result = new byte[file.Length + first.Length + end.Length];
 
-            //add the first part to the result
+            Buffer.BlockCopy(first, 0, result, 0, first.Length);
+            Buffer.BlockCopy(file, 0 , result, first.Length,file.Length);
+            Buffer.BlockCopy(end, 0, result, first.Length+file.Length, end.Length);
+
+
+
+            /*//add the first part to the result
             for(int i=0;i<first.Length;i++)
             {
                 result[i] = first[i];
@@ -123,7 +129,7 @@ namespace Server.PackageComposer
             {
                 result[i + ptr] = end[i];
             }
-
+            */
             assembly = Encoding.UTF8.GetString(result);
 
             return result;

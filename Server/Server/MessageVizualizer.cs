@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    static class ResponceVizualizer
+    static class MessageVizualizer
     {
         public static void Show(byte[] responce)
         {

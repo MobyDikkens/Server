@@ -62,7 +62,7 @@ namespace Server
             {
                 var changedResponce = AddPackageSize(responce);
 
-                ResponceVizualizer.Show(changedResponce);
+                MessageVizualizer.Show(changedResponce);
 
                 NetworkStream networkStream = client.GetStream();
 
@@ -99,6 +99,9 @@ namespace Server
 
                 byte[] result = new byte[size.Length + responce.Length];
 
+                Buffer.BlockCopy(size, 0, result, 0, size.Length);
+                Buffer.BlockCopy(responce, 0, result, size.Length, responce.Length);
+                /*
                 for (int i = 0; i < size.Length; i++)
                 {
                     result[i] = size[i];
@@ -109,7 +112,7 @@ namespace Server
                 for (int i = 0; i < responce.Length; i++)
                 {
                     result[i + ptr] = responce[i];
-                }
+                }*/
 
                 return result;
             }

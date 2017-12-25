@@ -64,7 +64,7 @@
     <Compile Include="DMLProcessor\RequestProcessor.cs" />
     <Compile Include="DMLProcessor\ResponceProcessor.cs" />
     <Compile Include="Processor.cs" />
-    <Compile Include="ResponceVizualizer.cs" />
+    <Compile Include="MessageVizualizer.cs" />
     <Compile Include="Solution.cs" />
     <Compile Include="StartingConfigs\ServerConfig.cs" />
     <Compile Include="StartingConfigs\ServerStarting.cs" />

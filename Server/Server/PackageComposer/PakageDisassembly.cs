@@ -27,8 +27,10 @@ namespace Server.PackageComposer
                 byte[] dml = new byte[3];
                 Buffer.BlockCopy(package, 0, dml, 0, 3);
 
+                string DML = Encoding.UTF8.GetString(dml);
+
                 //Check if we have a DML protocol if not throw the exception
-                if (dml != Encoding.UTF8.GetBytes("DML"))
+                if (DML != "DML")
                 {
                     UnknownPakageException exception = new UnknownPakageException();
 

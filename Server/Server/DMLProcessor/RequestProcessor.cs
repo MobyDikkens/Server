@@ -271,7 +271,7 @@ namespace Server.PackageProcessor
                     }
 
                     path += "\\";
-                    path += package[4];
+                    path += Encoding.UTF8.GetString(package[4]);
 
                     //if client exists send all dates to him him
                     this.responce = responce.GetFile(path, flags);

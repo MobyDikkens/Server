@@ -82,7 +82,7 @@ namespace Server
                 listener.Start();
                 wslistener.Start();
 
-                wslistener.AddWebSocketService<WSHandlers.MessageControlles>("/");//,() => new WSHandlers.MessageControlles() { IgnoreExtensions = true });
+                wslistener.AddWebSocketService<WSHandlers.MessageControlles>("/",() => new WSHandlers.MessageControlles() { IgnoreExtensions = true });
                 Console.WriteLine("Starting to Listen:");
             }
             catch(Exception ex)
@@ -150,16 +150,22 @@ namespace Server
                     Console.WriteLine(ex.ToString());
                     Eflags = true;
                 }
-                
 
-                Console.WriteLine();
-                Console.WriteLine();
-               // Console.WriteLine("*****************************************************************************");
-                Console.WriteLine("Recieved data:\n{0}", package);
-                //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
-                Console.WriteLine(); 
-                Console.WriteLine();
-                Console.WriteLine();
+
+                try
+                {
+
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    // Console.WriteLine("*****************************************************************************");
+                    Console.WriteLine("Recieved data:\n{0}", package);
+                    //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
+                catch
+                { }
 
             }
 

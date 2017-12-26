@@ -14,11 +14,18 @@ namespace Server
 
         static void Main(string[] args)
         {
-            Program server = new Program();
+            try
+            {
+                Program server = new Program();
 
-            server.StartServer();
+                server.StartServer();
 
-            Console.ReadKey();
+                Console.ReadKey();
+            }
+            catch
+            {
+                Console.WriteLine("Unexpected ERROR on the server");
+            }
         }
 
 

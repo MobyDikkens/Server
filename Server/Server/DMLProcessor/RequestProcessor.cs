@@ -13,11 +13,11 @@ namespace Server.PackageProcessor
     {
         public enum DMLRequests { IsAlive = 0, Register, GetLastUpdate, GetFile, SendFile }
         
-        private string[] package;
+        private byte[][] package;
 
         private byte[] responce = default(byte[]);
 
-        public RequestProcessor(string[] package)
+        public RequestProcessor(byte[][] package)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Server.PackageProcessor
             }
 
             //Call request type processing
-            RequestType(package[1]);
+            RequestType(Encoding.UTF8.GetString(package[1]));
             
 
         }
@@ -53,6 +53,7 @@ namespace Server.PackageProcessor
 
         private void RequestType(string request)
         {
+
             switch(request)
             {
                 case "IsAlive":
@@ -103,7 +104,7 @@ namespace Server.PackageProcessor
                     //trying to find our new client
                     foreach (var tmp in queryable)
                     {
-                        if (tmp.Login == package[2] && tmp.Password == package[3])//if we is already exist
+                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
                         {
                             flags = true;
                             break;
@@ -147,7 +148,7 @@ namespace Server.PackageProcessor
                     //trying to find our new client
                     foreach (var tmp in queryable)
                     {
-                        if(tmp.Login == package[2])//if we is already exist
+                        if(tmp.Login == Encoding.UTF8.GetString(package[2]))//if we is already exist
                         {
                             flags = true;
                             break;
@@ -157,7 +158,7 @@ namespace Server.PackageProcessor
                     //if client does not exist resister hom
                     if(!flags)
                     {
-                        ClientModel.Client client = new ClientModel.Client(package[2], package[3]);
+                        ClientModel.Client client = new ClientModel.Client(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
 
                         db.Clients.Add(client);
 
@@ -200,7 +201,7 @@ namespace Server.PackageProcessor
                 //user last update
                 DateTime dateTime = default(DateTime);
                 string path = default(string);
-                string clietnDir = package[2];//Login = Working DIrectory
+                string clietnDir = Encoding.UTF8.GetString(package[2]);//Login = Working DIrectory
 
                 //open a db
                 using (var db = new ClientContext())
@@ -212,7 +213,7 @@ namespace Server.PackageProcessor
                     //trying to find our new client
                     foreach (var tmp in queryable)
                     {
-                        if (tmp.Login == package[2] && tmp.Password == package[3])//if we is already exist
+                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
                         {
                             path = tmp.WorkingDirectory;
                             dateTime = tmp.LastUpdate;
@@ -261,7 +262,7 @@ namespace Server.PackageProcessor
                     //trying to find our new client
                     foreach (var tmp in queryable)
                     {
-                        if (tmp.Login == package[2] && tmp.Password == package[3])//if we is already exist
+                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
                         {
                             path = tmp.WorkingDirectory;
                             flags = true;

@@ -9,7 +9,7 @@ namespace Server.WSHandlers
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            string request = e.Data;
+            byte[] request = e.RawData;
             
             //to process our requests
             PackageProcessor.RequestProcessor processor = default(PackageProcessor.RequestProcessor);
@@ -19,7 +19,7 @@ namespace Server.WSHandlers
                 PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(request);
 
                 //unpack array of DML request
-                string[] unpack = disassembly.Unpack();
+                byte[][] unpack = disassembly.Unpack();
 
                 //initialize processor
                 processor = new PackageProcessor.RequestProcessor(unpack);
@@ -32,20 +32,27 @@ namespace Server.WSHandlers
             }
             catch (PackageComposer.UnknownPakageException)//if unkn pckg
             {
-                Console.WriteLine("UnknownPackage");
-                PackageProcessor.ResponceProcessor.UnknownPakage();
-                byte[] responce = processor.GetResponce();
+                try
+                {
+                    byte[] responce = PackageProcessor.ResponceProcessor.UnknownPakage();
 
-                this.Send(responce);
+                    this.Send(responce);
+                }
+                catch
+                { }
 
             }
             catch//other
             {
-                Console.WriteLine("BadRequest");
-                PackageProcessor.ResponceProcessor.BadRequest();
-                byte[] responce = processor.GetResponce();
+                try
+                {
 
-                this.Send(responce);
+                    byte[] responce = PackageProcessor.ResponceProcessor.BadRequest();
+
+                    this.Send(responce);
+                }
+                catch
+                { }
             }
         }
     }

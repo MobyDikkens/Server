@@ -82,7 +82,7 @@ namespace Server
                 listener.Start();
                 wslistener.Start();
 
-                wslistener.AddWebSocketService<WSHandlers.MessageControlles>("/",() => new WSHandlers.MessageControlles() { IgnoreExtensions = true });
+                wslistener.AddWebSocketService<WSHandlers.MessageControlles>("/");//,() => new WSHandlers.MessageControlles() { IgnoreExtensions = true });
                 Console.WriteLine("Starting to Listen:");
             }
             catch(Exception ex)
@@ -126,6 +126,7 @@ namespace Server
         {
             TcpClient client = o as TcpClient;
             string package = String.Empty;
+            byte[] rcvBuffer = default(byte[]);
 
             //Error falgs
             bool Eflags = false;
@@ -141,7 +142,8 @@ namespace Server
             {
                 try
                 {
-                    package = Unpackage(client);
+                    rcvBuffer = Unpackage(client);
+                    package = Encoding.UTF8.GetString(rcvBuffer);
                 }
                 catch (Exception ex)
                 {
@@ -167,7 +169,7 @@ namespace Server
                 Processor processor = new Solution();
 
                 //Process it
-                processor.FindSolution(client, package);
+                processor.FindSolution(client, rcvBuffer);
 
             }
             else
@@ -184,7 +186,7 @@ namespace Server
 
 
         //Make it ~ integrated into a NetworkStream
-        private static string Unpackage(TcpClient client)
+        private static byte[] Unpackage(TcpClient client)
         {
             //amoun of bytes and package buffer
 
@@ -257,7 +259,7 @@ namespace Server
                 }*/
                 
             }
-            return package;
+            return rcvBuffer;
         }
     }
 }

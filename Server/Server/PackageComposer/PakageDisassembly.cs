@@ -13,16 +13,22 @@ namespace Server.PackageComposer
         public enum DMLCommands { Autorization = 0, GetLastUpdate, GetFile, SendFile }
 
         //Package
-        private string package;
+        private byte[] package;
 
-        private string[] unpack;
+        private byte[][] unpack;
 
-        public PakageDisassembly(string package)
+
+
+        public PakageDisassembly(byte[] package)
         {
-            if (package != String.Empty)
+            if (package != default(byte[]) && package.Length > 3)
             {
+                //need to check whether it is a DML package
+                byte[] dml = new byte[3];
+                Buffer.BlockCopy(package, 0, dml, 0, 3);
+
                 //Check if we have a DML protocol if not throw the exception
-                if (package.Substring(0, 3) != "DML")
+                if (dml != Encoding.UTF8.GetBytes("DML"))
                 {
                     UnknownPakageException exception = new UnknownPakageException();
 
@@ -42,52 +48,21 @@ namespace Server.PackageComposer
             }
 
             //To check if it is a \r in the end of string[]
-            bool flags = false;
+            bool flags = true;
 
-            string[] pack = package.Split('\n');
+            byte[][] pack = SpliteRN(package);
 
             Console.WriteLine();
 
             Console.WriteLine("Split the package:");
 
-            for (int i = 0; i < pack.Length; i++)
+            for(int i=0;i<pack.Length;i++)
             {
-                //Check if it is the end + write out pack in unpack array with corrections
-                if (pack[i] == "\r")
-                {
-                    int lenth = i;
-
-                    unpack = new string[lenth];
-
-                    for (int j = 0; j < lenth; j++)
-                    {
-                        unpack[j] = pack[j];
-                    }
-
-                    flags = true;
-
-                    break;
-
-                }
-
-                //remove /r
-                try
-                {
-                    pack[i] = pack[i].Remove(pack[i].IndexOf('\r'));
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    UnknownPakageException ex = new UnknownPakageException();
-
-                    throw ex;
-
-                }
-
-                Console.Write("{0}:",i+1);
-                Console.WriteLine(pack[i]);
-                
+                Console.WriteLine(Encoding.UTF8.GetString(pack[i]));
             }
+            
 
+            
 
             Console.WriteLine("*****************************************************************************");
 
@@ -108,8 +83,70 @@ namespace Server.PackageComposer
 
         }
 
+
+        private byte[][] SpliteRN(byte[] array)
+        {
+            try
+            {
+                //the result of caling the function
+                byte[][] result = default(byte[][]);
+
+
+                //the \r\n separator
+                byte[] separator = Encoding.UTF8.GetBytes("\r\n");
+
+
+                //list that contains the positions of each \r in the sequence
+                List<int> positions = new List<int>();
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i] == separator[0])
+                    {
+                        if (i < array.Length - 1 && array[i + 1] == separator[1])
+                        {
+                            positions.Add(i);
+                        }
+                    }
+
+                }
+
+                //Initialize the result
+                result = new byte[positions.Count - 1][];
+
+                byte[] tmp = default(byte[]);
+
+                int offset = 0;
+
+                //sub?byte the sequence
+                for (int i = 0; i < result.Length; i++)
+                {
+                    tmp = new byte[positions[i] - offset];
+
+                    for (int j = 0; j < tmp.Length; j++)
+                    {
+                        tmp[j] = array[j + offset];
+
+                    }
+
+                    offset = positions[i] + 2;
+                    result[i] = new byte[tmp.Length];
+                    result[i] = tmp;
+
+                }
+
+
+                return result;
+
+            }
+            catch
+            {
+                return default(byte[][]);
+            }
+        }
+
         //To get an unpack package array
-        public string[] Unpack()
+        public byte[][] Unpack()
         {
             return unpack;
         }

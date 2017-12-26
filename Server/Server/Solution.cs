@@ -17,19 +17,21 @@ namespace Server
             
 
         //Realize what what type of protocol is we working with
-        public void FindSolution(TcpClient client,string request)
+        public void FindSolution(TcpClient client,byte[] request)
         {
             this.client = client;
 
+            string strRequest = Encoding.UTF8.GetString(request);
+
             try
             {
-                if (request.IndexOf("HTTP") > -1)
+                if (strRequest.IndexOf("HTTP") > -1)
                 {
-                    if (request.IndexOf("Sec-WebSocket-Key: ") > -1)
+                    if (strRequest.IndexOf("Sec-WebSocket-Key: ") > -1)
                     {
 
                         //Send a responce "HADSHAKE"
-                        WebSocketHandler(request);
+                        WebSocketHandler(strRequest);
                     }
                     else
                     {
@@ -138,7 +140,7 @@ namespace Server
         }
 
         //Make a processing of DML Requests
-        private void DMLHandler(string request)
+        private void DMLHandler(byte[] request)
         {
             //to process our requests
             PackageProcessor.RequestProcessor processor = default(PackageProcessor.RequestProcessor);
@@ -148,7 +150,7 @@ namespace Server
                 PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(request);
 
                 //unpack array of DML request
-                string[] unpack = disassembly.Unpack();
+                byte[][] unpack = disassembly.Unpack();
 
                 //initialize processor
                 processor = new PackageProcessor.RequestProcessor(unpack);
@@ -162,15 +164,15 @@ namespace Server
             catch (PackageComposer.UnknownPakageException)//if unkn pckg
             {
                 //Console.WriteLine("UnknownPackage");
-                PackageProcessor.ResponceProcessor.UnknownPakage();
-                byte[] responce = processor.GetResponce();
+                
+                byte[] responce = PackageProcessor.ResponceProcessor.UnknownPakage();
                 Responce(responce);
             }
             catch//other
             {
                 //Console.WriteLine("BadRequest");
-                PackageProcessor.ResponceProcessor.BadRequest();
-                byte[] responce = processor.GetResponce();
+               
+                byte[] responce = PackageProcessor.ResponceProcessor.BadRequest();
                 Responce(responce);
             }
         }

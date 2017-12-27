@@ -206,7 +206,7 @@ namespace Server.PackageProcessor
                 
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
                 this.responce = ResponceProcessor.BadRequest();
             }
 
@@ -257,8 +257,67 @@ namespace Server.PackageProcessor
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
                 this.responce = ResponceProcessor.BadRequest();
+            }
+
+        }
+
+
+        //DB Requests
+        private ClientModel.Client DBSearch(string login,string password)
+        {
+            ClientModel.Client client = default(ClientModel.Client);
+
+            try
+            {
+                using (var db = new ClientContext())
+                {
+                    //list of clients in db
+                    IQueryable<ClientModel.Client> queryable = db.Clients;
+
+                    string path = default(string);
+                    
+                    bool flags = false;
+
+                    DateTime dateTime = default(DateTime);
+
+                    //trying to find our new client
+                    foreach (var tmp in queryable)
+                    {
+                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
+                        {
+                            path = tmp.WorkingDirectory;
+                            dateTime = tmp.LastUpdate;
+                            flags = true;
+                            break;
+                        }
+                    }
+
+
+
+                    path += "\\";
+                    path += Encoding.UTF8.GetString(package[4]);
+
+                    client = new ClientModel.Client(login, password, path);
+                    client.LastUpdate = dateTime;
+
+                    if(flags)
+                    {
+                        return client;
+                    }
+                    else
+                    {
+                        return default(ClientModel.Client);
+                    }
+
+
+
+                }
+            }
+            catch
+            {
+                return default(ClientModel.Client);
             }
 
         }

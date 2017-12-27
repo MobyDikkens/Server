@@ -10,7 +10,9 @@ namespace Server.WSHandlers
         protected override void OnMessage(MessageEventArgs e)
         {
             byte[] request = e.RawData;
-            
+
+            string data = e.Data;
+
             //to process our requests
             PackageProcessor.RequestProcessor processor = default(PackageProcessor.RequestProcessor);
             //networkStream.Close();

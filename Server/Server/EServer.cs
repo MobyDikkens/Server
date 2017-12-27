@@ -37,7 +37,7 @@ namespace Server
             }
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
         }
 
@@ -56,7 +56,7 @@ namespace Server
             }
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
         }
 
@@ -70,7 +70,7 @@ namespace Server
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
         }
 
@@ -87,7 +87,7 @@ namespace Server
             }
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
 
             //Run server
@@ -115,7 +115,7 @@ namespace Server
                 }
                 catch(Exception ex)
                 {
-                    //Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.ToString());
                 }
 
             }
@@ -147,7 +147,7 @@ namespace Server
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.ToString());
                     Eflags = true;
                 }
 
@@ -228,7 +228,7 @@ namespace Server
             }
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
                 return null;
             }
 
@@ -252,7 +252,7 @@ namespace Server
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.ToString());
                 }
 
 

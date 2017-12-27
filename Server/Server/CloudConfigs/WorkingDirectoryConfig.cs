@@ -23,7 +23,7 @@ namespace Server.CloudConfigs
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
 
             return null;
@@ -67,7 +67,7 @@ namespace Server.CloudConfigs
             }
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
 
             return catalogTree;
@@ -130,7 +130,7 @@ namespace Server.CloudConfigs
             }
             catch(Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
 
                 return default(byte[]);
             }

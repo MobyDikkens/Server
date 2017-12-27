@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\MobyDi\.Rider2017.2\system\resharper-host\local\Transient\ReSharperHost\v10\SolutionCaches\_Server.-731926686.00" t="ExcludeRecursive" />
+    <e p="C:\Users\MobyDi\Desktop\Server\Server" t="IncludeFlat">
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Server" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="ClassDiagram1.cd" t="Include" />
+        <e p="ClientContext.cs" t="Include" />
+        <e p="ClientModel" t="Include">
+          <e p="Client.cs" t="Include" />
+        </e>
+        <e p="CloudConfigs" t="Include">
+          <e p="WorkingDirectoryConfig.cs" t="Include" />
+        </e>
+        <e p="Commands" t="Include" />
+        <e p="ContextConfigurations" t="Include">
+          <e p="ClientConfigurations.cs" t="Include" />
+        </e>
+        <e p="DMLProcessor" t="Include">
+          <e p="RequestProcessor.cs" t="Include" />
+          <e p="ResponceProcessor.cs" t="Include" />
+        </e>
+        <e p="Enums" t="Include">
+          <e p="ResponceType.cs" t="Include" />
+        </e>
+        <e p="EServer.cs" t="Include" />
+        <e p="MessageVizualizer.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="PackageComposer" t="Include">
+          <e p="Exceptions" t="Include">
+            <e p="UnknownPakage.cs" t="Include" />
+          </e>
+          <e p="PackageAssembly.cs" t="Include" />
+          <e p="PakageDisassembly.cs" t="Include" />
+        </e>
+        <e p="packages.config" t="Include" />
+        <e p="Processor.cs" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Resources" t="Include" />
+        <e p="Server.csproj" t="IncludeRecursive" />
+        <e p="Solution.cs" t="Include" />
+        <e p="StartingConfigs" t="Include">
+          <e p="ServerConfig.cs" t="Include" />
+          <e p="ServerStarting.cs" t="Include" />
+        </e>
+        <e p="WebSocketProcessor" t="Include">
+          <e p="RequestProcessor.cs" t="Include" />
+          <e p="ResponceProcessor.cs" t="Include" />
+        </e>
+        <e p="WSHandlers" t="Include">
+          <e p="MessageControlles.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Server.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>

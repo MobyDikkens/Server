@@ -191,6 +191,7 @@ namespace Server
         }
 
 
+        //Safe read from the stream
         public static byte[] ReadWholeArray(NetworkStream stream, byte[] data)
         {
             int offset = 0;

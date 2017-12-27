@@ -57,28 +57,53 @@ namespace Server.PackageProcessor
             switch(request)
             {
                 case "IsAlive":
-                    IsAlive();
-                    break;
+                    {
+                        Console.WriteLine("IsAlive");
+                        IsAlive();
+                        break;
+                    }
 
                 case "Register":
-                    Register();
-                    break;
+                    {
+                        Console.WriteLine("Register");
+                        Register();
+                        break;
+                    }
 
                 case "GetLastUpdate":
-                    GetLastUpdate();
-                    break;
+                    {
+                        Console.WriteLine("GetLastUpdate");
+                        GetLastUpdate();
+                        break;
+                    }
 
                 case "GetFile":
-                    GetFile();
-                    break;
+                    {
+                        Console.WriteLine("GetFile");
+                        GetFile();
+                        break;
+                    }
 
                 case "SendFile":
-                    SendFile();
-                    break;
+                    {
+                        Console.WriteLine("SendFile");
+                        SendFile();
+                        break;
+                    }
+
+                case "SendDirectory":
+                    {
+                        Console.WriteLine("SendDirectory");
+                        SendDirectory();
+                        break;
+                    }
 
                 default:
-                    PackageComposer.UnknownPakageException ex = new PackageComposer.UnknownPakageException();
-                    throw ex;
+                    {
+                        Console.WriteLine("Default");
+                        PackageComposer.UnknownPakageException ex = new PackageComposer.UnknownPakageException();
+                        throw ex;
+                    }
                     //break;
             }
         }
@@ -181,7 +206,7 @@ namespace Server.PackageProcessor
                 
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
                 this.responce = ResponceProcessor.BadRequest();
             }
 
@@ -232,7 +257,7 @@ namespace Server.PackageProcessor
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
                 this.responce = ResponceProcessor.BadRequest();
             }
 
@@ -270,6 +295,8 @@ namespace Server.PackageProcessor
                         }
                     }
 
+
+
                     path += "\\";
                     path += Encoding.UTF8.GetString(package[4]);
 
@@ -287,8 +314,106 @@ namespace Server.PackageProcessor
 
         private void SendFile()
         {
+            ResponceProcessor responce = new ResponceProcessor();
 
+            try
+            {
+
+                //if user was logged
+                bool flags = false;
+
+                string path = default(string);
+                
+
+                //open a db
+                using (var db = new ClientContext())
+                {
+                    //list of clients in db
+                    IQueryable<ClientModel.Client> queryable = db.Clients;
+
+                   
+
+                    //trying to find our new client
+                    foreach (var tmp in queryable)
+                    {
+                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
+                        {
+                            path = tmp.WorkingDirectory;
+                            tmp.LastUpdate = DateTime.Now;
+                            flags = true;
+                            break;
+                        }
+                    }
+
+
+
+                    path += "\\";
+                    path += Encoding.UTF8.GetString(package[4]);
+
+                    bool success = CloudConfigs.WorkingDirectoryConfig.CreateFile(path,package[5]);
+
+                    //if client exists send all dates to him him
+                    this.responce = responce.SendFile(flags,success);
+
+
+                }
+            }
+            catch
+            {
+                this.responce = ResponceProcessor.BadRequest();
+            }
         }
+
+        private void SendDirectory()
+        {
+            ResponceProcessor responce = new ResponceProcessor();
+
+            try
+            {
+
+                //if user was logged
+                bool flags = false;
+
+                string path = default(string);
+
+
+                //open a db
+                using (var db = new ClientContext())
+                {
+                    //list of clients in db
+                    IQueryable<ClientModel.Client> queryable = db.Clients;
+
+
+
+                    //trying to find our new client
+                    foreach (var tmp in queryable)
+                    {
+                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
+                        {
+                            path = tmp.WorkingDirectory;
+                            tmp.LastUpdate = DateTime.Now;
+                            flags = true;
+                            break;
+                        }
+                    }
+
+                    path += "\\";
+                    path += Encoding.UTF8.GetString(package[4]);
+
+                    bool success = CloudConfigs.WorkingDirectoryConfig.CreateDirectory(path);
+
+                    //if client exists send all dates to him him
+                    this.responce = responce.SendDirectory(flags,success);
+
+
+                }
+            }
+            catch
+            {
+                this.responce = ResponceProcessor.BadRequest();
+            }
+        }
+
 
     }
 }

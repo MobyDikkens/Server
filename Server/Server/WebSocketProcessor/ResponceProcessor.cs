@@ -79,7 +79,7 @@ namespace Server.WebSocketProcessor
                     {
                         stream.Read(buffer, 0, buffer.Length);
                         {
-                            Console.WriteLine(Encoding.UTF8.GetString(buffer));
+                            //Console.WriteLine(Encoding.UTF8.GetString(buffer));
                         }
                     }
                 }

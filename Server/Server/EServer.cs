@@ -37,7 +37,7 @@ namespace Server
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
         }
 
@@ -47,16 +47,16 @@ namespace Server
             try
             {
                 listener = new TcpListener(endPoint);
-                Console.WriteLine("Server have been sucesfully started\nAdress:{0}:{1}", endPoint.Address,endPoint.Port);
+                //Console.WriteLine("Server have been sucesfully started\nAdress:{0}:{1}", endPoint.Address,endPoint.Port);
 
                 wslistener = new WebSocketServer(IPAddress.Any, wsPort);
-                Console.WriteLine("WS Server have been sucesfully started\nAdress:{0}:{1}", IPAddress.Any, wsPort);
+                //Console.WriteLine("WS Server have been sucesfully started\nAdress:{0}:{1}", IPAddress.Any, wsPort);
 
 
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
         }
 
@@ -66,11 +66,11 @@ namespace Server
             try
             {
                 listener = new TcpListener(endPoint);
-                Console.WriteLine("Server have been sucesfully started\nAdress:{0}", endPoint.ToString());
+                //Console.WriteLine("Server have been sucesfully started\nAdress:{0}", endPoint.ToString());
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
         }
 
@@ -83,11 +83,11 @@ namespace Server
                 wslistener.Start();
 
                 wslistener.AddWebSocketService<WSHandlers.MessageControlles>("/",() => new WSHandlers.MessageControlles() { IgnoreExtensions = true });
-                Console.WriteLine("Starting to Listen:");
+                //Console.WriteLine("Starting to Listen:");
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
 
             //Run server
@@ -103,8 +103,8 @@ namespace Server
                 {
                     //Our client
                     TcpClient client = listener.AcceptTcpClient();
-                    Console.WriteLine();
-                    Console.WriteLine("Client have been connected:{0}", client.Client.RemoteEndPoint);
+                    //Console.WriteLine();
+                    //Console.WriteLine("Client have been connected:{0}", client.Client.RemoteEndPoint);
                     Thread thread = null;
 
                     thread = new Thread(ClientHandler);
@@ -115,7 +115,7 @@ namespace Server
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    //Console.WriteLine(ex.ToString());
                 }
 
             }
@@ -147,7 +147,7 @@ namespace Server
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    //Console.WriteLine(ex.ToString());
                     Eflags = true;
                 }
 
@@ -155,14 +155,14 @@ namespace Server
                 try
                 {
 
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    // Console.WriteLine("*****************************************************************************");
-                    Console.WriteLine("Recieved data:\n{0}", package);
-                    //Console.WriteLine("Count of connected clients:{0}", this.Lenth);
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
+                    //Console.WriteLine();
+                    //Console.WriteLine();
+                    // //Console.WriteLine("*****************************************************************************");
+                    //Console.WriteLine("Recieved data:\n{0:x}", package);
+                    ////Console.WriteLine("Count of connected clients:{0}", this.Lenth);
+                    //Console.WriteLine();
+                    //Console.WriteLine();
+                    //Console.WriteLine();
                 }
                 catch
                 { }
@@ -191,6 +191,24 @@ namespace Server
         }
 
 
+        public static byte[] ReadWholeArray(NetworkStream stream, byte[] data)
+        {
+            int offset = 0;
+            int remaining = data.Length;
+            while (remaining > 0)
+            {
+                int read = stream.Read(data, offset, remaining);
+                if (read <= 0)
+                    throw new PackageComposer.UnknownPakageException();
+                remaining -= read;
+                offset += read;
+            }
+
+            return data;
+        }
+
+
+
         //Make it ~ integrated into a NetworkStream
         private static byte[] Unpackage(TcpClient client)
         {
@@ -209,7 +227,7 @@ namespace Server
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
                 return null;
             }
 
@@ -225,16 +243,15 @@ namespace Server
 
                     rcvBytes = BitConverter.ToInt32(packageSize, 0);
                     rcvBuffer = new byte[rcvBytes];
-
-                    networkStream.Read(rcvBuffer, 0, rcvBytes);
-
+                    rcvBuffer = ReadWholeArray(networkStream, rcvBuffer);
+                   // networkStream.Read(rcvBuffer, 0, rcvBytes);
                     package += Encoding.UTF8.GetString(rcvBuffer, 0, rcvBytes);
 
                     break;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    //Console.WriteLine(ex.ToString());
                 }
 
 

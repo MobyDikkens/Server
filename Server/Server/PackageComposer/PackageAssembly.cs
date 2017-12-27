@@ -70,6 +70,13 @@ namespace Server.PackageComposer
                         assembly += "LastUpdates\r\n";
                         break;
                     }
+                case Enums.DMLResponce.Sucess:
+                    {
+                        assembly += "Sucess\r\n\r\n";
+                        break;
+                    }
+
+
                 default:
                     {
                         assembly += "BadRequest\r\n\r\n";

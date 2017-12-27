@@ -23,7 +23,7 @@ namespace Server.CloudConfigs
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
 
             return null;
@@ -67,7 +67,7 @@ namespace Server.CloudConfigs
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
 
             return catalogTree;
@@ -130,9 +130,55 @@ namespace Server.CloudConfigs
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
 
                 return default(byte[]);
+            }
+
+        }
+
+
+        public static bool CreateFile(string path,byte[] file)
+        {
+            try
+            {
+
+
+                path = path.Replace("/", "\\");
+
+
+                using (FileStream fs = File.Create(path))
+                {
+                    fs.Write(file, 0, file.Length);
+                    fs.Close();
+                }
+
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+
+      public static bool CreateDirectory(string path)
+        {
+            try
+            {
+
+                path.Replace("/", "\\");
+
+                Directory.CreateDirectory(path);
+
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
             }
 
         }

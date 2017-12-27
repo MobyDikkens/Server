@@ -54,22 +54,22 @@ namespace Server.PackageComposer
 
             byte[][] pack = SpliteRN(package);
 
-            Console.WriteLine();
+            //Console.WriteLine();
 
-            Console.WriteLine("Split the package:");
+            //Console.WriteLine("Split the package:");
 
-            for(int i=0;i<pack.Length;i++)
+           /* for(int i=0;i<pack.Length;i++)
             {
-                Console.WriteLine(Encoding.UTF8.GetString(pack[i]));
-            }
+                //Console.WriteLine("{0:x}",Encoding.UTF8.GetString(pack[i]));
+            }*/
             
 
             
 
-            Console.WriteLine("*****************************************************************************");
+            //Console.WriteLine("*****************************************************************************");
 
             //If package structure is inccorect
-            if (!flags)
+            if (!flags && pack == null)
             {
                 UnknownPakageException ex = new UnknownPakageException();
 
@@ -90,53 +90,75 @@ namespace Server.PackageComposer
         {
             try
             {
+                string s = Encoding.UTF8.GetString(array);
+
                 //the result of caling the function
                 byte[][] result = default(byte[][]);
 
-
-                //the \r\n separator
+                //Separator 
                 byte[] separator = Encoding.UTF8.GetBytes("\r\n");
 
 
-                //list that contains the positions of each \r in the sequence
                 List<int> positions = new List<int>();
+                int count = 0;
 
                 for (int i = 0; i < array.Length; i++)
                 {
+
+                    if (count == 5)
+                    {
+                        //check if it is a directory
+                        if (i != array.Length - 4)
+                        {
+                            positions.Add(array.Length - 1);// - \r\n\r\n  -  1
+                        }
+                        break;
+                    }
+
                     if (array[i] == separator[0])
                     {
                         if (i < array.Length - 1 && array[i + 1] == separator[1])
                         {
                             positions.Add(i);
+                            count++;
+
+                            if(count == 4)
+                            {
+                                if(i == array.Length - 4)
+                                {
+                                    break;
+                                }
+                            }
+
                         }
                     }
-
                 }
 
-                //Initialize the result
-                result = new byte[positions.Count - 1][];
 
-                byte[] tmp = default(byte[]);
+                result = new byte[positions.Count][];
+
+                int currPosition = 0;
 
                 int offset = 0;
 
-                //sub?byte the sequence
-                for (int i = 0; i < result.Length; i++)
+                for(int i=0;i<positions.Count;i++)
                 {
-                    tmp = new byte[positions[i] - offset];
+                    //current position
+                    currPosition = positions[i];
+                    //initialize each array
+                    result[i] = new byte[currPosition - offset];
 
-                    for (int j = 0; j < tmp.Length; j++)
+                    for(int j = 0;j<result[i].Length;j++)
                     {
-                        tmp[j] = array[j + offset];
-
+                        result[i][j] = array[j + offset];
                     }
 
-                    offset = positions[i] + 2;
-                    result[i] = new byte[tmp.Length];
-                    result[i] = tmp;
+                    //add \r\n
+                    offset = currPosition + 2;
 
                 }
 
+                
 
                 return result;
 
@@ -153,5 +175,7 @@ namespace Server.PackageComposer
             return unpack;
         }
 
+
+     
     }
 }

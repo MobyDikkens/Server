@@ -20,11 +20,11 @@ namespace Server
 
                 server.StartServer();
 
-                Console.ReadKey();
+                //Console.ReadKey();
             }
             catch
             {
-                Console.WriteLine("Unexpected ERROR on the server");
+                //Console.WriteLine("Unexpected ERROR on the server");
             }
         }
 

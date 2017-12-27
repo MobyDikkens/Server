@@ -22,7 +22,7 @@ namespace Server.Models
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
 
             return null;
@@ -41,7 +41,7 @@ namespace Server.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
 
             return default(int);
@@ -60,7 +60,7 @@ namespace Server.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
 
             return null;

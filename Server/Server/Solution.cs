@@ -64,7 +64,9 @@ namespace Server
             {
                 var changedResponce = AddPackageSize(responce);
 
-                MessageVizualizer.Show(changedResponce);
+
+
+                MessageVizualizer.Hex(changedResponce);
 
                 NetworkStream networkStream = client.GetStream();
 
@@ -149,8 +151,11 @@ namespace Server
             {
                 PackageComposer.PakageDisassembly disassembly = new PackageComposer.PakageDisassembly(request);
 
+                
                 //unpack array of DML request
                 byte[][] unpack = disassembly.Unpack();
+
+                
 
                 //initialize processor
                 processor = new PackageProcessor.RequestProcessor(unpack);
@@ -163,14 +168,14 @@ namespace Server
             }
             catch (PackageComposer.UnknownPakageException)//if unkn pckg
             {
-                //Console.WriteLine("UnknownPackage");
+                ////Console.WriteLine("UnknownPackage");
                 
                 byte[] responce = PackageProcessor.ResponceProcessor.UnknownPakage();
                 Responce(responce);
             }
             catch//other
             {
-                //Console.WriteLine("BadRequest");
+                ////Console.WriteLine("BadRequest");
                
                 byte[] responce = PackageProcessor.ResponceProcessor.BadRequest();
                 Responce(responce);

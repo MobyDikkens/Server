@@ -20,10 +20,11 @@ namespace Server.PackageProcessor
 
         public static byte[] UnknownPakage()
         {
+            PackageComposer.PackageAssembly assembly = default(PackageComposer.PackageAssembly);
 
             try
             {
-                PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UnknownPackage);
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UnknownPackage);
                 byte[] responce = assembly.Assemble();
 
                 return responce;
@@ -31,7 +32,9 @@ namespace Server.PackageProcessor
             }
             catch
             {
-                return null;
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
             }
 
         }
@@ -39,11 +42,11 @@ namespace Server.PackageProcessor
 
         public static byte[] BadRequest()
         {
-            
+            PackageComposer.PackageAssembly assembly = default(PackageComposer.PackageAssembly);
 
             try
             {
-                PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
                 byte[] responce = assembly.Assemble();
 
                 return responce;
@@ -51,7 +54,9 @@ namespace Server.PackageProcessor
             }
             catch
             {
-                return null;
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
             }
 
         }
@@ -59,6 +64,8 @@ namespace Server.PackageProcessor
 
         public byte[] IsAlive(bool flags)
         {
+            PackageComposer.PackageAssembly assembly = default(PackageComposer.PackageAssembly);
+
             byte[] responce = default(byte[]);
 
             //trying to send responce
@@ -67,13 +74,13 @@ namespace Server.PackageProcessor
 
                 if (flags)
                 {
-                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserExists);
+                   assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserExists);
                     responce = assembly.Assemble();
                 }
                 else
                 {
 
-                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
                     responce = assembly.Assemble();
                 }
 
@@ -84,7 +91,9 @@ namespace Server.PackageProcessor
             catch//if there is an exception
             {
                 //trying to send badrequest responce
-                return null;
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
 
             }
 
@@ -94,7 +103,7 @@ namespace Server.PackageProcessor
 
         public byte[] Register(bool flags)
         {
-
+            PackageComposer.PackageAssembly assembly = default(PackageComposer.PackageAssembly);
             byte[] responce = default(byte[]);
 
             try
@@ -102,12 +111,12 @@ namespace Server.PackageProcessor
 
                 if(!flags)//if already registered
                 {
-                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.RegistrationOk);
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.RegistrationOk);
                     responce = assembly.Assemble();
                 }
                 else
                 {
-                    PackageComposer.PackageAssembly assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserIsAlreadyExists);
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserIsAlreadyExists);
                     responce = assembly.Assemble();
                 }
 
@@ -116,9 +125,11 @@ namespace Server.PackageProcessor
 
                 return responce;
             }
-            catch (Exception)
+            catch
             {
-               return null;
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
             }
 
         }
@@ -152,20 +163,22 @@ namespace Server.PackageProcessor
 
                 //Send a responce
 
-               // Console.WriteLine();
+               // //Console.WriteLine();
 
-                //Console.WriteLine(assembly);
+                ////Console.WriteLine(assembly);
 
-                //Console.WriteLine();
+                ////Console.WriteLine();
 
 
                 return assembly.Assemble();
  
 
             }
-            catch (Exception)
+            catch
             {
-                return null;
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
             }
 
         }
@@ -216,6 +229,88 @@ namespace Server.PackageProcessor
                 return assembly.Assemble();
             }
 
+        }
+
+
+        public byte[] SendFile(bool flags,bool success)
+        {
+
+            byte[] message = default(byte[]);
+
+            PackageComposer.PackageAssembly assembly;
+
+            try
+            {
+                if (flags)
+                {
+                    if (success)
+                    {
+                        assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.Sucess);
+                        message = assembly.Assemble();
+                    }
+                    else
+                    {
+                        assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+                        message = assembly.Assemble();
+                    }
+
+                }
+                else
+                {
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
+                    message = assembly.Assemble();
+                }
+
+
+                return message;
+
+            }
+            catch
+            {
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
+            }
+        }
+
+        public byte[] SendDirectory(bool flags,bool success)
+        {
+            byte[] message = default(byte[]);
+
+            PackageComposer.PackageAssembly assembly;
+
+            try
+            {
+                if (flags)
+                {
+                    if (success)
+                    {
+                        assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.Sucess);
+                        message = assembly.Assemble();
+                    }
+                    else
+                    {
+                        assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+                        message = assembly.Assemble();
+                    }
+
+                }
+                else
+                {
+                    assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.UserNotFound);
+                    message = assembly.Assemble();
+                }
+
+
+                return message;
+
+            }
+            catch
+            {
+                assembly = new PackageComposer.PackageAssembly(Enums.DMLResponce.BadRequest);
+
+                return assembly.Assemble();
+            }
         }
 
 

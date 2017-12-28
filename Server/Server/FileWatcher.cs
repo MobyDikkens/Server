@@ -40,12 +40,13 @@ namespace Server
             {
                 FileSystemWatcher fsw = new FileSystemWatcher(path);
                 fswList.Add(fsw);
+                this.Start();
                 ipList.Add(ip);
             }
         }
 
 
-        public void Start()
+        private void Start()
         {
             foreach (var tmp in fswList)
             {
@@ -69,16 +70,23 @@ namespace Server
 
         protected void Handler(object sender,FileSystemEventArgs e)
         {
-            UdpClient client = default(UdpClient);
+
+            UdpClient client = new UdpClient();
+
 
             try
             {
+                foreach (var tmp in fswList)
+                {
+                    tmp.EnableRaisingEvents = false;
+                }
 
                 byte[] buffer = BitConverter.GetBytes(1);
 
                 foreach(var tmp in ipList)
                 {
-                    client.Send(buffer, buffer.Length, new IPEndPoint(tmp, 8045));
+                    client.Send(buffer, buffer.Length, new IPEndPoint(tmp, 8046));
+                    Console.WriteLine("1");
                 }
 
             }
@@ -90,6 +98,13 @@ namespace Server
                 }
                 catch
                 { }
+            }
+            finally
+            {
+                foreach (var tmp in fswList)
+                {
+                    tmp.EnableRaisingEvents = true;
+                }
             }
         }
         

@@ -432,12 +432,10 @@ namespace Server.PackageProcessor
                 else
                 {
 
-                    
+
 
                     //add path to cloud
                     path += client.WorkingDirectory;
-                    //add login
-                    path += client.Login;
                     path += "\\";
                     path += Encoding.UTF8.GetString(package[4]);
 

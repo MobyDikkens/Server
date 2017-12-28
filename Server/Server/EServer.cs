@@ -26,8 +26,6 @@ namespace Server
 
         private static int wsPort;
 
-        private static FileWatcher fw;
-
         //constructor
         public EServer()
         {
@@ -37,9 +35,6 @@ namespace Server
 
                 wsPort = ServerConfig.GetWsPort();
 
-
-                fw = new FileWatcher();
-                fw.Start();
             }
             catch(Exception ex)
             {
@@ -183,7 +178,7 @@ namespace Server
                 Processor processor = new Solution();
 
                 //Process it
-                processor.FindSolution(client,fw, rcvBuffer);
+                processor.FindSolution(client, rcvBuffer);
 
             }
             else

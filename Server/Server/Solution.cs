@@ -19,11 +19,11 @@ namespace Server
             
 
         //Realize what what type of protocol is we working with
-        public void FindSolution(TcpClient client,FileWatcher fw,byte[] request)
+        public void FindSolution(TcpClient client,byte[] request)
         {
             this.client = client;
 
-            this.fw = fw;
+            this.fw = new FileWatcher();
 
             string strRequest = Encoding.UTF8.GetString(request);
 

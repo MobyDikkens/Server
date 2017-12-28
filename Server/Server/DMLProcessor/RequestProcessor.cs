@@ -17,6 +17,14 @@ namespace Server.PackageProcessor
 
         private byte[] responce = default(byte[]);
 
+        private static ClientModel.Client client = default(ClientModel.Client);
+
+
+        public ClientModel.Client GetClient()
+        {
+            return RequestProcessor.client;
+        }
+
         public RequestProcessor(byte[][] package)
         {
             try
@@ -111,6 +119,7 @@ namespace Server.PackageProcessor
         //Is Alive Request
         private void IsAlive()
         {
+
 
             bool flags = true;
 
@@ -246,7 +255,10 @@ namespace Server.PackageProcessor
                 using (var db = new ClientContext())
                 {
                     //list of clients in db
-                    IQueryable<ClientModel.Client> queryable = db.Clients;
+                    IQueryable<ClientModel.Client> queryable = from cl in db.Clients
+                                                               where cl.Login == login
+                                                               where cl.Password == password
+                                                               select cl;
 
                     string path = default(string);
                     
@@ -272,10 +284,12 @@ namespace Server.PackageProcessor
 
                     if(flags)
                     {
+                        RequestProcessor.client = client;
                         return client;
                     }
                     else
                     {
+                        RequestProcessor.client = client;
                         return default(ClientModel.Client);
                     }
 
@@ -285,6 +299,7 @@ namespace Server.PackageProcessor
             }
             catch
             {
+                RequestProcessor.client = client;
                 return default(ClientModel.Client);
             }
 
@@ -357,9 +372,24 @@ namespace Server.PackageProcessor
                 else
                 {
 
+                    //get requested path + datetime
+                    string clientPath = Encoding.UTF8.GetString(package[4]);
+                    //delete the date
+                    string correctedPath = clientPath.Substring(0, clientPath.IndexOf('\n'));
+
+                    //index and lenth of data
+                    int index = clientPath.IndexOf('\n');
+                    int lenth = clientPath.Length - 1;
+
+                    string date = clientPath.Substring(index + 1 , lenth - index);
+
+                    DateTime dateTime = DateTime.Parse(date);
+
+                    client.LastUpdate = dateTime;
+
                     path = client.WorkingDirectory;
                     path += "\\";
-                    path += Encoding.UTF8.GetString(package[4]);
+                    path += correctedPath;
 
                     bool success = CloudConfigs.WorkingDirectoryConfig.CreateFile(path, package[5]);
 
@@ -392,6 +422,8 @@ namespace Server.PackageProcessor
                 ClientModel.Client client = DBSearch(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
 
 
+
+
                 if (client == default(ClientModel.Client))
                 {
                     flags = false;
@@ -400,7 +432,12 @@ namespace Server.PackageProcessor
                 else
                 {
 
+                    
 
+                    //add path to cloud
+                    path += client.WorkingDirectory;
+                    //add login
+                    path += client.Login;
                     path += "\\";
                     path += Encoding.UTF8.GetString(package[4]);
 

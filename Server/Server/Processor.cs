@@ -10,6 +10,6 @@ namespace Server
     //A high level Entity to provide communication with different types of protocols
     interface Processor
     {
-        void FindSolution(TcpClient client,byte[] request);
+        void FindSolution(TcpClient client,FileWatcher fw,byte[] request);
     }
 }

@@ -147,6 +147,16 @@ namespace Server.CloudConfigs
                 path = path.Replace("/", "\\");
 
 
+                string directoryIerarchy = default(string);
+
+                directoryIerarchy = path.Substring(0, path.LastIndexOf("\\"));
+
+                directoryIerarchy += "\\";
+
+
+                //Call create directory before create a files to be sure that all directories was created
+                CreateDirectory(directoryIerarchy);
+
                 using (FileStream fs = File.Create(path))
                 {
                     fs.Write(file, 0, file.Length);
@@ -168,7 +178,7 @@ namespace Server.CloudConfigs
             try
             {
 
-                path.Replace("/", "\\");
+                path = path.Replace("/", "\\");
 
                 Directory.CreateDirectory(path);
 

@@ -58,6 +58,7 @@
     <Compile Include="ContextConfigurations\ClientConfigurations.cs" />
     <Compile Include="Enums\ResponceType.cs" />
     <Compile Include="EServer.cs" />
+    <Compile Include="FileWatcher.cs" />
     <Compile Include="PackageComposer\PackageAssembly.cs" />
     <Compile Include="PackageComposer\PakageDisassembly.cs" />
     <Compile Include="PackageComposer\Exceptions\UnknownPakage.cs" />
@@ -77,6 +78,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram11.cd" />
+    <None Include="ClassDiagram12.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

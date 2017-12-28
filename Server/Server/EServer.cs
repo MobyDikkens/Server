@@ -26,6 +26,8 @@ namespace Server
 
         private static int wsPort;
 
+        private static FileWatcher fw;
+
         //constructor
         public EServer()
         {
@@ -34,6 +36,10 @@ namespace Server
                 endPoint = new IPEndPoint(IPAddress.Any, Convert.ToInt32(ServerConfig.GetPort()));
 
                 wsPort = ServerConfig.GetWsPort();
+
+
+                fw = new FileWatcher();
+                fw.Start();
             }
             catch(Exception ex)
             {
@@ -103,6 +109,8 @@ namespace Server
                 {
                     //Our client
                     TcpClient client = listener.AcceptTcpClient();
+
+
                     //Console.WriteLine();
                     //Console.WriteLine("Client have been connected:{0}", client.Client.RemoteEndPoint);
                     Thread thread = null;
@@ -175,7 +183,7 @@ namespace Server
                 Processor processor = new Solution();
 
                 //Process it
-                processor.FindSolution(client, rcvBuffer);
+                processor.FindSolution(client,fw, rcvBuffer);
 
             }
             else

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Net;
 
 
 namespace Server
@@ -13,13 +14,16 @@ namespace Server
     class Solution:Processor
     {
         TcpClient client = default(TcpClient);
-        
+
+        FileWatcher fw;
             
 
         //Realize what what type of protocol is we working with
-        public void FindSolution(TcpClient client,byte[] request)
+        public void FindSolution(TcpClient client,FileWatcher fw,byte[] request)
         {
             this.client = client;
+
+            this.fw = fw;
 
             string strRequest = Encoding.UTF8.GetString(request);
 
@@ -160,7 +164,12 @@ namespace Server
                 //initialize processor
                 processor = new PackageProcessor.RequestProcessor(unpack);
 
+                //add a client
+                fw.AddClient(((IPEndPoint)client.Client.RemoteEndPoint).Address, processor.GetClient().WorkingDirectory);
+
+
                 byte[] responce = processor.GetResponce();
+
 
 
                 Responce(responce);

@@ -112,7 +112,7 @@ namespace Server.PackageProcessor
         private void IsAlive()
         {
 
-            bool flags = false;
+            bool flags = true;
 
             ResponceProcessor responce = new ResponceProcessor();
 
@@ -121,24 +121,13 @@ namespace Server.PackageProcessor
             try
             {
 
-                using (var db = new ClientContext())
+                ClientModel.Client client = DBSearch(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
+
+                
+                if(client == default(ClientModel.Client))
                 {
-                    //list of clients in db
-                    IQueryable<ClientModel.Client> queryable = db.Clients;
-
-                    //trying to find our new client
-                    foreach (var tmp in queryable)
-                    {
-                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
-                        {
-                            flags = true;
-                            break;
-                        }
-                    }
-
-                    
+                    flags = false;
                 }
-
 
                 this.responce = responce.IsAlive(flags);
 
@@ -221,38 +210,21 @@ namespace Server.PackageProcessor
             {
 
                 //if user was logged
-                bool flags = false;
+                bool flags = true;
 
-                //user last update
-                DateTime dateTime = default(DateTime);
-                string path = default(string);
-                string clietnDir = Encoding.UTF8.GetString(package[2]);//Login = Working DIrectory
+                ClientModel.Client client = DBSearch(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
 
-                //open a db
-                using (var db = new ClientContext())
+
+                if (client == default(ClientModel.Client))
                 {
-                    //list of clients in db
-                    IQueryable<ClientModel.Client> queryable = db.Clients;
-                    
-
-                    //trying to find our new client
-                    foreach (var tmp in queryable)
-                    {
-                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
-                        {
-                            path = tmp.WorkingDirectory;
-                            dateTime = tmp.LastUpdate;
-                            flags = true;
-                            break;
-                        }
-                    }
-
-                    
-
+                    flags = false;
+                    this.responce = ResponceProcessor.BadRequest();
                 }
+                else
+                {
 
-
-                this.responce = responce.GetLastUpdate(flags,dateTime,path,clietnDir);
+                    this.responce = responce.GetLastUpdate(flags, client.LastUpdate, client.WorkingDirectory, client.Login);//clientDir == Login
+                }
 
             }
             catch (Exception ex)
@@ -265,7 +237,7 @@ namespace Server.PackageProcessor
 
 
         //DB Requests
-        private ClientModel.Client DBSearch(string login,string password)
+        private static ClientModel.Client DBSearch(string login,string password)
         {
             ClientModel.Client client = default(ClientModel.Client);
 
@@ -285,7 +257,7 @@ namespace Server.PackageProcessor
                     //trying to find our new client
                     foreach (var tmp in queryable)
                     {
-                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
+                        if (tmp.Login == login && tmp.Password == password )//if we is already exist
                         {
                             path = tmp.WorkingDirectory;
                             dateTime = tmp.LastUpdate;
@@ -294,10 +266,6 @@ namespace Server.PackageProcessor
                         }
                     }
 
-
-
-                    path += "\\";
-                    path += Encoding.UTF8.GetString(package[4]);
 
                     client = new ClientModel.Client(login, password, path);
                     client.LastUpdate = dateTime;
@@ -330,40 +298,34 @@ namespace Server.PackageProcessor
             {
 
                 //if user was logged
-                bool flags = false;
+                bool flags = true;
 
                 string path = default(string);
-                
 
-                //open a db
-                using (var db = new ClientContext())
+
+
+                ClientModel.Client client = DBSearch(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
+
+
+                if (client == default(ClientModel.Client))
                 {
-                    //list of clients in db
-                    IQueryable<ClientModel.Client> queryable = db.Clients;
+                    flags = false;
+                    this.responce = ResponceProcessor.BadRequest();
+                }
+                else
+                {
 
-                   
-
-                    //trying to find our new client
-                    foreach (var tmp in queryable)
-                    {
-                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
-                        {
-                            path = tmp.WorkingDirectory;
-                            flags = true;
-                            break;
-                        }
-                    }
-
-
-
+                    path = client.WorkingDirectory;
                     path += "\\";
                     path += Encoding.UTF8.GetString(package[4]);
 
                     //if client exists send all dates to him him
                     this.responce = responce.GetFile(path, flags);
-
-
                 }
+
+              
+
+                
             }
             catch
             {
@@ -379,43 +341,34 @@ namespace Server.PackageProcessor
             {
 
                 //if user was logged
-                bool flags = false;
+                bool flags = true;
 
                 string path = default(string);
-                
 
-                //open a db
-                using (var db = new ClientContext())
+
+                ClientModel.Client client = DBSearch(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
+
+
+                if (client == default(ClientModel.Client))
                 {
-                    //list of clients in db
-                    IQueryable<ClientModel.Client> queryable = db.Clients;
+                    flags = false;
+                    this.responce = ResponceProcessor.BadRequest();
+                }
+                else
+                {
 
-                   
-
-                    //trying to find our new client
-                    foreach (var tmp in queryable)
-                    {
-                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
-                        {
-                            path = tmp.WorkingDirectory;
-                            tmp.LastUpdate = DateTime.Now;
-                            flags = true;
-                            break;
-                        }
-                    }
-
-
-
+                    path = client.WorkingDirectory;
                     path += "\\";
                     path += Encoding.UTF8.GetString(package[4]);
 
-                    bool success = CloudConfigs.WorkingDirectoryConfig.CreateFile(path,package[5]);
+                    bool success = CloudConfigs.WorkingDirectoryConfig.CreateFile(path, package[5]);
 
                     //if client exists send all dates to him him
-                    this.responce = responce.SendFile(flags,success);
-
-
+                    this.responce = responce.SendFile(flags, success);
                 }
+
+
+                
             }
             catch
             {
@@ -431,30 +384,22 @@ namespace Server.PackageProcessor
             {
 
                 //if user was logged
-                bool flags = false;
+                bool flags = true;
 
                 string path = default(string);
 
 
-                //open a db
-                using (var db = new ClientContext())
+                ClientModel.Client client = DBSearch(Encoding.UTF8.GetString(package[2]), Encoding.UTF8.GetString(package[3]));
+
+
+                if (client == default(ClientModel.Client))
                 {
-                    //list of clients in db
-                    IQueryable<ClientModel.Client> queryable = db.Clients;
+                    flags = false;
+                    this.responce = ResponceProcessor.BadRequest();
+                }
+                else
+                {
 
-
-
-                    //trying to find our new client
-                    foreach (var tmp in queryable)
-                    {
-                        if (tmp.Login == Encoding.UTF8.GetString(package[2]) && tmp.Password == Encoding.UTF8.GetString(package[3]))//if we is already exist
-                        {
-                            path = tmp.WorkingDirectory;
-                            tmp.LastUpdate = DateTime.Now;
-                            flags = true;
-                            break;
-                        }
-                    }
 
                     path += "\\";
                     path += Encoding.UTF8.GetString(package[4]);
@@ -462,10 +407,12 @@ namespace Server.PackageProcessor
                     bool success = CloudConfigs.WorkingDirectoryConfig.CreateDirectory(path);
 
                     //if client exists send all dates to him him
-                    this.responce = responce.SendDirectory(flags,success);
-
+                    this.responce = responce.SendDirectory(flags, success);
 
                 }
+
+
+
             }
             catch
             {

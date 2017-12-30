@@ -86,7 +86,7 @@ namespace Server
                 foreach(var tmp in ipList)
                 {
                     client.Send(buffer, buffer.Length, new IPEndPoint(tmp, 8046));
-                    Console.WriteLine("1");
+                    //Console.WriteLine("1");
                 }
 
             }
